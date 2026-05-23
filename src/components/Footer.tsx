@@ -14,6 +14,7 @@ export function Footer() {
           <p className="font-medium mb-3">{t("f_shop")}</p>
           <ul className="space-y-2 text-neutral-500 dark:text-neutral-400">
             <li><Link to="/products">{t("nav_products")}</Link></li>
+            <li><Link to="/track">{t("nav_track")}</Link></li>
             <li><Link to="/faq">{t("nav_faq")}</Link></li>
           </ul>
         </div>

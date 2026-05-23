@@ -2,6 +2,7 @@ import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PRODUCTS, formatPrice, type Category } from "@/lib/products";
 import { useI18n } from "@/lib/i18n";
+import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/products/")({
   head: () => ({
@@ -98,24 +99,7 @@ function ProductsPage() {
         <div className="lg:col-span-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800">
             {filtered.map((p) => (
-              <Link
-                key={p.id}
-                to="/products/$id"
-                params={{ id: String(p.id) }}
-                className="bg-neutral-50 dark:bg-neutral-950 p-4 group block"
-              >
-                <div className="aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-900 mb-4">
-                  <img src={p.image} alt={p[lang].name} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
-                </div>
-                <p className="text-[10px] tracking-widest uppercase text-neutral-500 dark:text-neutral-400">{p[lang].categoryLabel}</p>
-                <p className="text-sm font-medium leading-snug mt-1">{p[lang].name}</p>
-                <div className="mt-1 flex items-baseline gap-2">
-                  <p className="text-xs text-neutral-900 dark:text-neutral-50 tabular-nums">{formatPrice(p.price)}</p>
-                  {p.originalPrice && p.originalPrice > p.price && (
-                    <p className="text-[11px] text-neutral-400 dark:text-neutral-500 line-through tabular-nums">{formatPrice(p.originalPrice)}</p>
-                  )}
-                </div>
-              </Link>
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
           {filtered.length === 0 && (

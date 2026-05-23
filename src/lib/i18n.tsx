@@ -3,7 +3,7 @@ import type { Lang } from "./products";
 
 const DICT = {
   en: {
-    nav_home: "Home", nav_products: "Products", nav_faq: "FAQ",
+    nav_home: "Home", nav_products: "Products", nav_faq: "FAQ", nav_track: "Track Order",
     btn_add: "Add to Cart", btn_checkout: "Checkout", btn_submit: "Submit",
     btn_shop: "Shop Now", btn_view_all: "View all", btn_place_order: "Place Order",
     cart: "Cart", cart_empty: "Your cart is empty.", subtotal: "Subtotal", remove: "Remove",
@@ -50,7 +50,7 @@ const DICT = {
     address_label: "Address", facebook: "Facebook",
   },
   vi: {
-    nav_home: "Trang chủ", nav_products: "Sản phẩm", nav_faq: "FAQ",
+    nav_home: "Trang chủ", nav_products: "Sản phẩm", nav_faq: "FAQ", nav_track: "Tra cứu",
     btn_add: "Thêm vào giỏ", btn_checkout: "Thanh toán", btn_submit: "Gửi",
     btn_shop: "Mua ngay", btn_view_all: "Xem tất cả", btn_place_order: "Đặt hàng",
     cart: "Giỏ hàng", cart_empty: "Giỏ hàng của bạn đang trống.", subtotal: "Tạm tính", remove: "Xoá",

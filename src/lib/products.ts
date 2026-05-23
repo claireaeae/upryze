@@ -29,7 +29,7 @@ export type Product = {
 export const PRODUCTS: Product[] = [
   {
     id: 1, price: 3990000, originalPrice: 4850000, colors: ["Mint"], category: "posture",
-    image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/desk.png",
     en: {
       name: "Height-Adjustable Standing Desk Pro",
       description: "Compact 60×120 cm standing desk with adjustable height (70–119 cm). Electronic control buttons and smooth dual-motor lifting system. Stylish mint green design perfect for any home office.",
@@ -133,7 +133,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 4, price: 3900000, originalPrice: 4860000, colors: ["Black"], category: "posture",
-    image: "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/chair.png",
     en: {
       name: "Ergonomic Mesh Office Chair",
       description: "Automatic weight-responsive recline, 3D armrests, and adjustable lumbar support. Full breathable mesh keeps you cool during long sessions.",
@@ -205,7 +205,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 6, price: 250000, originalPrice: 379000, colors: ["Black"], category: "sensory",
-    image: "https://images.unsplash.com/photo-1620808201544-547345f7d214?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/belt.png",
     en: {
       name: "Posture Corrector Brace with Steel Support",
       description: "Adjustable corrector with steel support bars to keep the spine aligned. Soft, breathable fabric that can be worn under clothing.",
@@ -239,7 +239,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 7, price: 300000, originalPrice: 480000, colors: ["Black"], category: "sensory",
-    image: "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/light.png",
     en: {
       name: "Smart LED Monitor Light Bar",
       description: "5W LED bar with 80 LEDs. RG0 technology reduces blue light. Adjustable color temperature (2700K–6500K) and brightness — zero screen glare.",
@@ -275,7 +275,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 8, price: 1300000, originalPrice: 1964000, colors: ["White"], category: "care",
-    image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/eye.png",
     en: {
       name: "Steam Eye Massager with 16 Nodes",
       description: "16 vibration nodes and steam function to relax eye muscles, reduce puffiness, and minimize dark circles. USB rechargeable with 3–4 hour battery life.",

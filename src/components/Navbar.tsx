@@ -12,6 +12,7 @@ export function Navbar() {
   const NAV = [
     { to: "/" as const, label: t("nav_home"), exact: true },
     { to: "/products" as const, label: t("nav_products"), exact: false },
+    { to: "/track" as const, label: t("nav_track"), exact: false },
     { to: "/faq" as const, label: t("nav_faq"), exact: false },
   ];
 

@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { PRODUCTS, formatPrice, getProduct } from "@/lib/products";
 import { useI18n } from "@/lib/i18n";
+import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -106,15 +107,7 @@ function Scorecard() {
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800">
                 {recommendIds.map((id) => {
                   const p = getProduct(id)!;
-                  return (
-                    <Link key={id} to="/products/$id" params={{ id: String(id) }} className="bg-neutral-50 dark:bg-neutral-950 p-4 group">
-                      <div className="aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-900 mb-3">
-                        <img src={p.image} alt={p[lang].name} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
-                      </div>
-                      <p className="text-sm font-medium">{p[lang].name}</p>
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 tabular-nums">{formatPrice(p.price)}</p>
-                    </Link>
-                  );
+                  return <ProductCard key={id} product={p} />;
                 })}
               </div>
             </>
@@ -169,13 +162,7 @@ function Home() {
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-200 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800">
           {featured.map((p) => (
-            <Link key={p.id} to="/products/$id" params={{ id: String(p.id) }} className="bg-neutral-50 dark:bg-neutral-950 p-4 group">
-              <div className="aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-900 mb-4">
-                <img src={p.image} alt={p[lang].name} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
-              </div>
-              <p className="text-sm font-medium leading-snug">{p[lang].name}</p>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 tabular-nums">{formatPrice(p.price)}</p>
-            </Link>
+            <ProductCard key={p.id} product={p} />
           ))}
         </div>
       </section>

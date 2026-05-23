@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrackRouteImport } from './routes/track'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout-success'
 import { Route as CheckoutRouteImport } from './routes/checkout'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products.index'
 import { Route as ProductsIdRouteImport } from './routes/products.$id'
 
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/checkout-success': typeof CheckoutSuccessRoute
   '/faq': typeof FaqRoute
+  '/track': typeof TrackRoute
   '/products/$id': typeof ProductsIdRoute
   '/products/': typeof ProductsIndexRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/checkout-success': typeof CheckoutSuccessRoute
   '/faq': typeof FaqRoute
+  '/track': typeof TrackRoute
   '/products/$id': typeof ProductsIdRoute
   '/products': typeof ProductsIndexRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/checkout-success': typeof CheckoutSuccessRoute
   '/faq': typeof FaqRoute
+  '/track': typeof TrackRoute
   '/products/$id': typeof ProductsIdRoute
   '/products/': typeof ProductsIndexRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/checkout-success'
     | '/faq'
+    | '/track'
     | '/products/$id'
     | '/products/'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/checkout-success'
     | '/faq'
+    | '/track'
     | '/products/$id'
     | '/products'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/checkout-success'
     | '/faq'
+    | '/track'
     | '/products/$id'
     | '/products/'
   fileRoutesById: FileRoutesById
@@ -117,12 +129,20 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
   FaqRoute: typeof FaqRoute
+  TrackRoute: typeof TrackRoute
   ProductsIdRoute: typeof ProductsIdRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/faq': {
       id: '/faq'
       path: '/faq'
@@ -181,6 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
   FaqRoute: FaqRoute,
+  TrackRoute: TrackRoute,
   ProductsIdRoute: ProductsIdRoute,
   ProductsIndexRoute: ProductsIndexRoute,
 }
