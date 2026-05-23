@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PRODUCTS, formatPrice, type Category } from "@/lib/products";
 import { useI18n } from "@/lib/i18n";
 
-export const Route = createFileRoute("/products")({
+export const Route = createFileRoute("/products/")({
   head: () => ({
     meta: [
       { title: "Products — Upryze" },
