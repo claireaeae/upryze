@@ -29,20 +29,27 @@ function CheckoutPage() {
     if (detailed.length === 0) return;
     setSubmitting(true);
 
-    // Save order to localStorage
-    saveOrder({
-      customer: {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        address: form.address,
-        city: form.city,
-        note: form.note || undefined,
-      },
-      items: detailed.map((d) => ({ id: d.product.id, qty: d.qty })),
-      total: subtotal,
-      paymentMethod: "cod",
-    });
+    // Save order to Supabase
+    try {
+      await saveOrder({
+        customer: {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          address: form.address,
+          city: form.city,
+          note: form.note || undefined,
+        },
+        items: detailed.map((d) => ({ id: d.product.id, qty: d.qty })),
+        total: subtotal,
+        paymentMethod: "cod",
+      });
+    } catch (error) {
+      console.error("Failed to save order", error);
+      alert("Failed to submit order. Please try again.");
+      setSubmitting(false);
+      return;
+    }
 
     clear();
     // Small delay for UX feel

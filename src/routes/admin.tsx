@@ -231,21 +231,29 @@ function OrderCard({ order, onStatusChange, onDelete }: {
 function Dashboard() {
   const [orders, setOrders] = React.useState<Order[]>([]);
   const [filter, setFilter] = React.useState<OrderStatus | "all">("all");
+  const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    setOrders(getOrders());
-  }, []);
-
-  const refresh = () => setOrders(getOrders());
-
-  const handleStatusChange = (id: string, status: OrderStatus) => {
-    updateOrderStatus(id, status);
-    refresh();
+  const fetchOrders = async () => {
+    setLoading(true);
+    const data = await getOrders();
+    setOrders(data);
+    setLoading(false);
   };
 
-  const handleDelete = (id: string) => {
-    deleteOrder(id);
-    refresh();
+  React.useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const refresh = () => fetchOrders();
+
+  const handleStatusChange = async (id: string, status: OrderStatus) => {
+    await updateOrderStatus(id, status);
+    fetchOrders();
+  };
+
+  const handleDelete = async (id: string) => {
+    await deleteOrder(id);
+    fetchOrders();
   };
 
   const filtered = filter === "all" ? orders : orders.filter((o) => o.status === filter);
@@ -319,7 +327,11 @@ function Dashboard() {
         </div>
 
         {/* Orders list */}
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-16 text-center">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 animate-pulse">Loading orders from Supabase...</p>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-16 text-center">
             <BarChart3 className="h-10 w-10 text-neutral-300 dark:text-neutral-700 mx-auto mb-4" />
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
