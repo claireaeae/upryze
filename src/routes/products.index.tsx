@@ -100,21 +100,32 @@ function ProductsPage() {
         </aside>
 
         <div className="lg:col-span-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800">
-            {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-          {isLoading && (
-            <div className="py-20 text-center text-sm text-neutral-500 dark:text-neutral-400">
-              Loading products...
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="bg-neutral-50 dark:bg-neutral-950 p-4 h-[420px] flex flex-col">
+                  <div className="w-full aspect-square bg-neutral-200 dark:bg-neutral-900 animate-pulse mb-4"></div>
+                  <div className="h-4 bg-neutral-200 dark:bg-neutral-900 w-1/3 mb-2 animate-pulse"></div>
+                  <div className="h-5 bg-neutral-200 dark:bg-neutral-900 w-2/3 mb-4 animate-pulse"></div>
+                  <div className="mt-auto h-10 bg-neutral-200 dark:bg-neutral-900 w-full animate-pulse"></div>
+                </div>
+              ))}
             </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800">
+                {filtered.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+              {filtered.length === 0 && (
+                <div className="py-20 text-center text-sm text-neutral-500 dark:text-neutral-400">
+                  {t("no_products")}
+                </div>
+              )}
+            </>
           )}
-          {!isLoading && filtered.length === 0 && (
-            <div className="py-20 text-center text-sm text-neutral-500 dark:text-neutral-400">
-              {t("no_match")}
-            </div>
-          )}
+
         </div>
       </div>
     </div>

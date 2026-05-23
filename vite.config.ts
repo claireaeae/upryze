@@ -11,4 +11,16 @@ export default defineConfig({
     TanStackRouterVite(),
     react(),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          router: ["@tanstack/react-router", "@tanstack/router-plugin"],
+          query: ["@tanstack/react-query"],
+          ui: ["lucide-react", "sonner", "vaul", "embla-carousel-react"],
+        },
+      },
+    },
+  },
 });

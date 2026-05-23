@@ -424,7 +424,7 @@ function ProductManager({ products }: { products: Product[] }) {
           <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
             {products.map(p => (
               <tr key={p.id}>
-                <td className="px-5 py-3"><img src={p.image} alt={p.en.name} className="h-10 w-10 object-cover" /></td>
+                <td className="px-5 py-3"><img src={p.image} alt={p.en.name} loading="lazy" className="h-10 w-10 object-cover" /></td>
                 <td className="px-5 py-3 font-medium">{p.en.name}</td>
                 <td className="px-5 py-3 tabular-nums">{formatPrice(p.price)}</td>
                 <td className="px-5 py-3 text-right space-x-2">

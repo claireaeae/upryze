@@ -19,7 +19,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link to="/products/$id" params={{ id: String(product.id) }} className="bg-neutral-50 dark:bg-neutral-950 p-4 group block relative flex flex-col h-full">
       <div className="aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-900 mb-4 relative">
-        <img src={product.image} alt={product[lang].name} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+        <img src={product.image} alt={product[lang].name} loading="lazy" className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
       </div>
       <div className="flex-1 flex flex-col justify-between">
         <div>

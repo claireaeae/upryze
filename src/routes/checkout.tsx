@@ -148,7 +148,7 @@ function CheckoutPage() {
                 {detailed.map(({ product, qty }) => (
                   <li key={product.id} className="flex gap-4 pb-4 border-b border-neutral-200 dark:border-neutral-800 last:border-0">
                     <div className="h-16 w-16 flex-shrink-0 bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
-                      <img src={product.image} alt={product[lang].name} className="w-full h-full object-cover" />
+                      <img src={product.image} alt={product[lang].name} loading="lazy" className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium leading-snug line-clamp-2">{product[lang].name}</p>
