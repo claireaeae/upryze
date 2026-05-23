@@ -1,15 +1,13 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import * as React from "react";
+import { QueryClient } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
   createRootRouteWithContext,
   useRouter,
   useRouterState,
-  HeadContent,
-  Scripts,
 } from "@tanstack/react-router";
 
-import appCss from "../styles.css?url";
 import { CartProvider } from "@/lib/cart";
 import { ThemeProvider } from "@/lib/theme";
 import { I18nProvider } from "@/lib/i18n";
@@ -76,69 +74,28 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Upryze — Protect your health. Elevate your focus." },
-      { name: "description", content: "Ergonomic and health-supportive products for Deep Work." },
-      { property: "og:title", content: "Upryze — Protect your health. Elevate your focus." },
-      { property: "og:description", content: "Ergonomic and health-supportive products for Deep Work." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Upryze — Protect your health. Elevate your focus." },
-      { name: "twitter:description", content: "Ergonomic and health-supportive products for Deep Work." },
-    ],
-    links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" },
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const isCheckout = path.startsWith("/checkout");
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <I18nProvider>
-          <CartProvider>
-            {!isCheckout && <Navbar />}
-            <CartDrawer />
-            <main className={isCheckout ? "min-h-screen" : "pt-16 min-h-screen"}>
-              <Outlet />
-            </main>
-            {!isCheckout && <Footer />}
-            <FloatingControls />
-          </CartProvider>
-        </I18nProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <I18nProvider>
+        <CartProvider>
+          {!isCheckout && <Navbar />}
+          <CartDrawer />
+          <main className={isCheckout ? "min-h-screen" : "pt-16 min-h-screen"}>
+            <Outlet />
+          </main>
+          {!isCheckout && <Footer />}
+          <FloatingControls />
+        </CartProvider>
+      </I18nProvider>
+    </ThemeProvider>
   );
 }
