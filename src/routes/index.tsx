@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Ergonomic gear for Deep Work — standing desks, chairs, posture braces, monitor light bars." },
     ],
   }),
-  component: Home,
+  component: IndexPage,
 });
 
 type Answers = { q1: "A" | "B" | null; q2: "A" | "B" | "C" | null; q3: "A" | "B" | null };
