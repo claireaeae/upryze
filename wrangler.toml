@@ -1,0 +1,5 @@
+name = "upryze"
+compatibility_date = "2024-05-23"
+
+[assets]
+directory = "dist"
