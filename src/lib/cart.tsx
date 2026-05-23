@@ -1,5 +1,6 @@
 import * as React from "react";
-import { PRODUCTS, type Product } from "./products";
+import { type Product, getProducts } from "./products";
+import { useQuery } from "@tanstack/react-query";
 
 export type CartItem = { id: number; qty: number };
 
@@ -49,9 +50,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   const clear = () => setItems([]);
 
+  const { data: products = [] } = useQuery({ queryKey: ["products"], queryFn: getProducts });
+
   const detailed = items
     .map((i) => {
-      const product = PRODUCTS.find((p) => p.id === i.id);
+      const product = products.find((p) => p.id === i.id);
       return product ? { product, qty: i.qty } : null;
     })
     .filter(Boolean) as Array<{ product: Product; qty: number }>;

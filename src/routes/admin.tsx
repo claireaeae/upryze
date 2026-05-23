@@ -1,8 +1,9 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getOrders, updateOrderStatus, deleteOrder, type Order, type OrderStatus } from "@/lib/orders";
-import { PRODUCTS, formatPrice } from "@/lib/products";
-import { ShoppingBag, Clock, Truck, CheckCircle, XCircle, Package, Trash2, Eye, EyeOff, TrendingUp, BarChart3 } from "lucide-react";
+import { getProducts, addProduct, updateProduct, deleteProduct, formatPrice, type Product } from "@/lib/products";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ShoppingBag, Clock, Truck, CheckCircle, XCircle, Package, Trash2, Eye, EyeOff, TrendingUp, BarChart3, Plus, Edit2, Save, X, Image as ImageIcon } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin Dashboard — Upryze" }] }),
@@ -53,7 +54,6 @@ function PinScreen({ onAuth }: { onAuth: () => void }) {
         <h1 className="text-2xl font-semibold tracking-tight text-neutral-50 mb-2">Admin Dashboard</h1>
         <p className="text-sm text-neutral-400 mb-10">Enter your PIN to continue</p>
 
-        {/* PIN dots */}
         <div className="flex justify-center gap-3 mb-8">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
@@ -78,7 +78,6 @@ function PinScreen({ onAuth }: { onAuth: () => void }) {
           aria-label="PIN"
         />
 
-        {/* Numpad */}
         <div className="grid grid-cols-3 gap-3">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, null, 0, "⌫"].map((k, i) => (
             <button
@@ -123,10 +122,11 @@ function StatusBadge({ status }: { status: OrderStatus }) {
   );
 }
 
-function OrderCard({ order, onStatusChange, onDelete }: {
+function OrderCard({ order, onStatusChange, onDelete, products }: {
   order: Order;
   onStatusChange: (id: string, status: OrderStatus) => void;
   onDelete: (id: string) => void;
+  products: Product[];
 }) {
   const [expanded, setExpanded] = React.useState(false);
   const [confirmDelete, setConfirmDelete] = React.useState(false);
@@ -136,7 +136,6 @@ function OrderCard({ order, onStatusChange, onDelete }: {
 
   return (
     <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-      {/* Header row */}
       <div className="flex items-center gap-4 px-5 py-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -159,7 +158,6 @@ function OrderCard({ order, onStatusChange, onDelete }: {
         </button>
       </div>
 
-      {/* Expanded details */}
       {expanded && (
         <div className="border-t border-neutral-200 dark:border-neutral-800 px-5 py-4 space-y-4 bg-neutral-50 dark:bg-neutral-950">
           <div className="grid sm:grid-cols-2 gap-4">
@@ -181,7 +179,7 @@ function OrderCard({ order, onStatusChange, onDelete }: {
             <p className="text-[10px] tracking-widest uppercase text-neutral-400 mb-2">Items Ordered</p>
             <div className="space-y-2">
               {order.items.map((item) => {
-                const product = PRODUCTS.find((p) => p.id === item.id);
+                const product = products.find((p) => p.id === item.id);
                 if (!product) return null;
                 return (
                   <div key={item.id} className="flex items-center gap-3">
@@ -228,10 +226,230 @@ function OrderCard({ order, onStatusChange, onDelete }: {
   );
 }
 
+function ProductManager({ products }: { products: Product[] }) {
+  const qc = useQueryClient();
+  const [editingId, setEditingId] = React.useState<number | "new" | null>(null);
+  
+  const initialForm = {
+    category: "posture",
+    price: 0,
+    originalPrice: 0,
+    en_name: "",
+    vi_name: "",
+    en_label: "Posture",
+    vi_label: "Tư thế",
+    en_desc: "",
+    vi_desc: "",
+  };
+  
+  const [form, setForm] = React.useState(initialForm);
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [imagePreview, setImagePreview] = React.useState<string>("");
+  const [isSaving, setIsSaving] = React.useState(false);
+
+  const startEdit = (p: Product) => {
+    setEditingId(p.id);
+    setForm({
+      category: p.category,
+      price: p.price,
+      originalPrice: p.originalPrice || 0,
+      en_name: p.en.name,
+      vi_name: p.vi.name,
+      en_label: p.en.categoryLabel,
+      vi_label: p.vi.categoryLabel,
+      en_desc: p.en.description,
+      vi_desc: p.vi.description,
+    });
+    setImagePreview(p.image);
+    setImageFile(null);
+  };
+
+  const startNew = () => {
+    setEditingId("new");
+    setForm(initialForm);
+    setImagePreview("");
+    setImageFile(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      const payload: Omit<Product, "id"> = {
+        category: form.category as any,
+        price: form.price,
+        originalPrice: form.originalPrice || null,
+        image: imagePreview, // Will be overridden if imageFile is present
+        en: { name: form.en_name, categoryLabel: form.en_label, description: form.en_desc, features: [] },
+        vi: { name: form.vi_name, categoryLabel: form.vi_label, description: form.vi_desc, features: [] },
+      };
+
+      if (editingId === "new") {
+        await addProduct(payload, imageFile || undefined);
+      } else if (typeof editingId === "number") {
+        await updateProduct(editingId, payload, imageFile || undefined);
+      }
+      await qc.invalidateQueries({ queryKey: ["products"] });
+      setEditingId(null);
+    } catch (err) {
+      alert("Error saving product: " + (err as any).message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+    try {
+      await deleteProduct(id);
+      await qc.invalidateQueries({ queryKey: ["products"] });
+    } catch (err) {
+      alert("Error deleting product.");
+    }
+  };
+
+  if (editingId !== null) {
+    return (
+      <form onSubmit={handleSave} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">{editingId === "new" ? "Add New Product" : "Edit Product"}</h3>
+          <button type="button" onClick={cancelEdit} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Image Upload</label>
+              <div className="flex items-center gap-4">
+                {imagePreview ? (
+                  <img src={imagePreview} alt="Preview" className="h-16 w-16 object-cover border border-neutral-200 dark:border-neutral-800" />
+                ) : (
+                  <div className="h-16 w-16 border border-dashed border-neutral-300 dark:border-neutral-700 flex items-center justify-center">
+                    <ImageIcon className="h-6 w-6 text-neutral-300" />
+                  </div>
+                )}
+                <input type="file" accept="image/*" onChange={handleImageChange} className="text-xs" required={editingId === "new"} />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Category</label>
+              <select value={form.category} onChange={e => setForm({...form, category: e.target.value})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm">
+                <option value="posture">Posture</option>
+                <option value="sensory">Sensory</option>
+                <option value="care">Care</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Price (VND)</label>
+                <input type="number" required value={form.price} onChange={e => setForm({...form, price: Number(e.target.value)})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Original Price (VND)</label>
+                <input type="number" value={form.originalPrice} onChange={e => setForm({...form, originalPrice: Number(e.target.value)})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm" />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Name (English / Vietnamese)</label>
+              <div className="grid grid-cols-2 gap-2">
+                <input required placeholder="English name" value={form.en_name} onChange={e => setForm({...form, en_name: e.target.value})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm" />
+                <input required placeholder="Tên tiếng Việt" value={form.vi_name} onChange={e => setForm({...form, vi_name: e.target.value})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Label (English / Vietnamese)</label>
+              <div className="grid grid-cols-2 gap-2">
+                <input required placeholder="e.g. Posture" value={form.en_label} onChange={e => setForm({...form, en_label: e.target.value})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm" />
+                <input required placeholder="VD: Tư thế" value={form.vi_label} onChange={e => setForm({...form, vi_label: e.target.value})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Description (English / Vietnamese)</label>
+              <div className="space-y-2">
+                <textarea required placeholder="English description" value={form.en_desc} onChange={e => setForm({...form, en_desc: e.target.value})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm" rows={2} />
+                <textarea required placeholder="Mô tả tiếng Việt" value={form.vi_desc} onChange={e => setForm({...form, vi_desc: e.target.value})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm" rows={2} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-4 border-t border-neutral-200 dark:border-neutral-800">
+          <button disabled={isSaving} type="submit" className="flex items-center gap-2 bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-6 py-2.5 text-sm uppercase tracking-widest hover:opacity-90 disabled:opacity-50">
+            <Save className="h-4 w-4" /> {isSaving ? "Saving..." : "Save Product"}
+          </button>
+        </div>
+      </form>
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex justify-end mb-4">
+        <button onClick={startNew} className="flex items-center gap-2 bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-4 py-2 text-sm tracking-widest uppercase hover:opacity-90">
+          <Plus className="h-4 w-4" /> Add Product
+        </button>
+      </div>
+      
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-neutral-50 dark:bg-neutral-950 border-b border-neutral-200 dark:border-neutral-800 text-xs tracking-widest uppercase text-neutral-500">
+            <tr>
+              <th className="px-5 py-3 font-medium">Image</th>
+              <th className="px-5 py-3 font-medium">Name</th>
+              <th className="px-5 py-3 font-medium">Price</th>
+              <th className="px-5 py-3 font-medium text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
+            {products.map(p => (
+              <tr key={p.id}>
+                <td className="px-5 py-3"><img src={p.image} alt={p.en.name} className="h-10 w-10 object-cover" /></td>
+                <td className="px-5 py-3 font-medium">{p.en.name}</td>
+                <td className="px-5 py-3 tabular-nums">{formatPrice(p.price)}</td>
+                <td className="px-5 py-3 text-right space-x-2">
+                  <button onClick={() => startEdit(p)} className="p-1.5 text-neutral-500 hover:text-blue-500 transition-colors"><Edit2 className="h-4 w-4" /></button>
+                  <button onClick={() => handleDelete(p.id)} className="p-1.5 text-neutral-500 hover:text-red-500 transition-colors"><Trash2 className="h-4 w-4" /></button>
+                </td>
+              </tr>
+            ))}
+            {products.length === 0 && (
+              <tr><td colSpan={4} className="px-5 py-10 text-center text-neutral-500">No products found.</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 function Dashboard() {
+  const [activeTab, setActiveTab] = React.useState<"orders" | "products">("orders");
   const [orders, setOrders] = React.useState<Order[]>([]);
   const [filter, setFilter] = React.useState<OrderStatus | "all">("all");
   const [loading, setLoading] = React.useState(true);
+
+  const { data: products = [], isLoading: productsLoading } = useQuery({ queryKey: ["products"], queryFn: getProducts });
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -240,17 +458,13 @@ function Dashboard() {
     setLoading(false);
   };
 
-  React.useEffect(() => {
-    fetchOrders();
-  }, []);
-
+  React.useEffect(() => { fetchOrders(); }, []);
   const refresh = () => fetchOrders();
 
   const handleStatusChange = async (id: string, status: OrderStatus) => {
     await updateOrderStatus(id, status);
     fetchOrders();
   };
-
   const handleDelete = async (id: string) => {
     await deleteOrder(id);
     fetchOrders();
@@ -263,7 +477,6 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-50">
-      {/* Header */}
       <header className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -285,70 +498,91 @@ function Dashboard() {
       </header>
 
       <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-          {[
-            { label: "Total Orders", value: String(orders.length), icon: ShoppingBag, sub: "All time" },
-            { label: "Revenue", value: formatPrice(totalRevenue), icon: TrendingUp, sub: "Excl. cancelled" },
-            { label: "Pending", value: String(pendingCount), icon: Clock, sub: "Need action" },
-            { label: "Delivered", value: String(deliveredCount), icon: CheckCircle, sub: "Completed" },
-          ].map(({ label, value, icon: Icon, sub }) => (
-            <div key={label} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-xs tracking-widest uppercase text-neutral-500 dark:text-neutral-400">{label}</p>
-                  <p className="text-2xl font-semibold mt-2 tabular-nums">{value}</p>
-                  <p className="text-xs text-neutral-400 mt-1">{sub}</p>
-                </div>
-                <Icon className="h-5 w-5 text-neutral-300 dark:text-neutral-700 flex-shrink-0" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Filters */}
-        <div className="flex items-center gap-2 flex-wrap mb-6">
-          {(["all", ...Object.keys(STATUS_CONFIG)] as Array<"all" | OrderStatus>).map((s) => (
-            <button
-              key={s}
-              onClick={() => setFilter(s)}
-              className={`text-xs px-3 py-1.5 border transition-colors cursor-pointer ${
-                filter === s
-                  ? "border-neutral-900 dark:border-neutral-50 bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900"
-                  : "border-neutral-200 dark:border-neutral-700 hover:border-neutral-900 dark:hover:border-neutral-50"
-              }`}
-            >
-              {s === "all" ? `All (${orders.length})` : `${STATUS_CONFIG[s].label} (${orders.filter((o) => o.status === s).length})`}
-            </button>
-          ))}
-          <button onClick={refresh} className="text-xs px-3 py-1.5 border border-neutral-200 dark:border-neutral-700 hover:border-neutral-900 dark:hover:border-neutral-50 ml-auto cursor-pointer transition-colors">
-            ↻ Refresh
+        <div className="flex items-center gap-8 border-b border-neutral-200 dark:border-neutral-800 mb-8">
+          <button 
+            onClick={() => setActiveTab("orders")}
+            className={`pb-4 text-sm font-medium tracking-widest uppercase transition-colors border-b-2 ${activeTab === "orders" ? "border-neutral-900 dark:border-neutral-50 text-neutral-900 dark:text-neutral-50" : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
+          >
+            Orders
+          </button>
+          <button 
+            onClick={() => setActiveTab("products")}
+            className={`pb-4 text-sm font-medium tracking-widest uppercase transition-colors border-b-2 ${activeTab === "products" ? "border-neutral-900 dark:border-neutral-50 text-neutral-900 dark:text-neutral-50" : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
+          >
+            Products
           </button>
         </div>
 
-        {/* Orders list */}
-        {loading ? (
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-16 text-center">
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 animate-pulse">Loading orders from Supabase...</p>
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-16 text-center">
-            <BarChart3 className="h-10 w-10 text-neutral-300 dark:text-neutral-700 mx-auto mb-4" />
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              {orders.length === 0 ? "No orders yet. Share your store link to start selling!" : "No orders match this filter."}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filtered.map((order) => (
-              <OrderCard
-                key={order.orderId}
-                order={order}
-                onStatusChange={handleStatusChange}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+        {activeTab === "products" && (
+          <ProductManager products={products} />
+        )}
+
+        {activeTab === "orders" && (
+          <>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+              {[
+                { label: "Total Orders", value: String(orders.length), icon: ShoppingBag, sub: "All time" },
+                { label: "Revenue", value: formatPrice(totalRevenue), icon: TrendingUp, sub: "Excl. cancelled" },
+                { label: "Pending", value: String(pendingCount), icon: Clock, sub: "Need action" },
+                { label: "Delivered", value: String(deliveredCount), icon: CheckCircle, sub: "Completed" },
+              ].map(({ label, value, icon: Icon, sub }) => (
+                <div key={label} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-5">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-xs tracking-widest uppercase text-neutral-500 dark:text-neutral-400">{label}</p>
+                      <p className="text-2xl font-semibold mt-2 tabular-nums">{value}</p>
+                      <p className="text-xs text-neutral-400 mt-1">{sub}</p>
+                    </div>
+                    <Icon className="h-5 w-5 text-neutral-300 dark:text-neutral-700 flex-shrink-0" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap mb-6">
+              {(["all", ...Object.keys(STATUS_CONFIG)] as Array<"all" | OrderStatus>).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setFilter(s)}
+                  className={`text-xs px-3 py-1.5 border transition-colors cursor-pointer ${
+                    filter === s
+                      ? "border-neutral-900 dark:border-neutral-50 bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900"
+                      : "border-neutral-200 dark:border-neutral-700 hover:border-neutral-900 dark:hover:border-neutral-50"
+                  }`}
+                >
+                  {s === "all" ? `All (${orders.length})` : `${STATUS_CONFIG[s].label} (${orders.filter((o) => o.status === s).length})`}
+                </button>
+              ))}
+              <button onClick={refresh} className="text-xs px-3 py-1.5 border border-neutral-200 dark:border-neutral-700 hover:border-neutral-900 dark:hover:border-neutral-50 ml-auto cursor-pointer transition-colors">
+                ↻ Refresh
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-16 text-center">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 animate-pulse">Loading orders from Supabase...</p>
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-16 text-center">
+                <BarChart3 className="h-10 w-10 text-neutral-300 dark:text-neutral-700 mx-auto mb-4" />
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  {orders.length === 0 ? "No orders yet. Share your store link to start selling!" : "No orders match this filter."}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filtered.map((order) => (
+                  <OrderCard
+                    key={order.orderId}
+                    order={order}
+                    onStatusChange={handleStatusChange}
+                    onDelete={handleDelete}
+                    products={products}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -1,7 +1,9 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { PRODUCTS, formatPrice, getProduct } from "@/lib/products";
+import { formatPrice } from "@/lib/products";
+import { getProducts, type Product } from "@/lib/products";
+import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@/lib/i18n";
 import { ProductCard } from "@/components/ProductCard";
 
@@ -17,7 +19,7 @@ export const Route = createFileRoute("/")({
 
 type Answers = { q1: "A" | "B" | null; q2: "A" | "B" | "C" | null; q3: "A" | "B" | null };
 
-function Scorecard() {
+function Scorecard({ products }: { products: Product[] }) {
   const { t, lang } = useI18n();
   const [a, setA] = React.useState<Answers>({ q1: null, q2: null, q3: null });
   const done = a.q1 && a.q2 && a.q3;
@@ -106,7 +108,8 @@ function Scorecard() {
               <p className="mt-8 text-sm font-medium">{t("sc_fixes")}</p>
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800">
                 {recommendIds.map((id) => {
-                  const p = getProduct(id)!;
+                  const p = products.find(prod => prod.id === id);
+                  if (!p) return null;
                   return <ProductCard key={id} product={p} />;
                 })}
               </div>
@@ -118,9 +121,10 @@ function Scorecard() {
   );
 }
 
-function Home() {
-  const { t, lang } = useI18n();
-  const featured = PRODUCTS.slice(0, 4);
+function IndexPage() {
+  const { lang, t } = useI18n();
+  const { data: products = [] } = useQuery({ queryKey: ["products"], queryFn: getProducts });
+  const featured = products.slice(0, 4);
 
   return (
     <div>
@@ -152,7 +156,7 @@ function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 lg:px-12 pb-32">
-        <Scorecard />
+        <Scorecard products={products} />
       </section>
 
       <section className="max-w-7xl mx-auto px-6 lg:px-12 pb-32">

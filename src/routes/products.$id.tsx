@@ -1,7 +1,9 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus, Minus, Star, ThumbsUp, Check, Package, User, ChevronRight } from "lucide-react";
-import { getProduct, formatPrice } from "@/lib/products";
+import { getProduct } from "@/lib/products";
+import { formatPrice } from "@/lib/products";
+import { useQuery } from "@tanstack/react-query";
 import { useCart } from "@/lib/cart";
 import { useI18n } from "@/lib/i18n";
 
@@ -35,7 +37,7 @@ function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "lg
 
 function ProductDetail() {
   const { id } = Route.useParams();
-  const product = getProduct(Number(id));
+  const { data: product, isLoading } = useQuery({ queryKey: ["product", id], queryFn: () => getProduct(Number(id)) });
   const { add, setOpen } = useCart();
   const { t, lang } = useI18n();
   const [qty, setQty] = React.useState(1);
@@ -74,6 +76,14 @@ function ProductDetail() {
     setAddedAnim(true);
     setTimeout(() => { setAddedAnim(false); setOpen(true); }, 600);
   };
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-24 text-center">
+        <p className="text-sm text-neutral-500">Loading product...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -136,19 +146,7 @@ function ProductDetail() {
 
           <p className="mt-5 text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">{data.description}</p>
 
-          {/* Colors */}
-          {product.colors.length > 0 && (
-            <div className="mt-6">
-              <p className="text-xs tracking-widest uppercase text-neutral-500 dark:text-neutral-400 mb-3">
-                {lang === "vi" ? "Màu sắc" : "Color"}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {product.colors.map((c) => (
-                  <span key={c} className="text-xs px-3 py-1.5 border border-neutral-300 dark:border-neutral-700 hover:border-neutral-900 dark:hover:border-neutral-50 cursor-default transition-colors">{c}</span>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Colors (Removed for DB simplicity) */}
 
           {/* Qty + Add to cart */}
           <div className="mt-auto pt-8 space-y-4">
@@ -220,36 +218,10 @@ function ProductDetail() {
           </ul>
         </div>
 
-        {/* What's in the box */}
-        <div className="bg-neutral-50 dark:bg-neutral-950 p-8">
-          <p className="text-xs tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400 mb-6">
-            {lang === "vi" ? "Trong hộp có gì?" : "What's in the Box"}
-          </p>
-          <ul className="space-y-2.5">
-            {data.whatsInBox.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-neutral-700 dark:text-neutral-300">
-                <Check className="h-4 w-4 mt-0.5 flex-shrink-0 text-neutral-400" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* What's in the box (Removed for DB simplicity) */}
       </div>
 
-      {/* Who it's for */}
-      <div className="mt-px bg-neutral-50 dark:bg-neutral-950 border border-t-0 border-neutral-200 dark:border-neutral-800 p-8">
-        <div className="flex items-start gap-4 max-w-3xl">
-          <div className="flex-shrink-0 h-10 w-10 bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center">
-            <User className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
-          </div>
-          <div>
-            <p className="text-xs tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400 mb-2">
-              {lang === "vi" ? "Dành cho ai?" : "Who It's For"}
-            </p>
-            <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">{data.forWho}</p>
-          </div>
-        </div>
-      </div>
+      {/* Who it's for (Removed for DB simplicity) */}
 
       {/* Reviews */}
       <section className="mt-24">

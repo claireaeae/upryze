@@ -1,6 +1,7 @@
 import * as React from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { PRODUCTS, formatPrice, type Category } from "@/lib/products";
+import { createFileRoute } from "@tanstack/react-router";
+import { formatPrice, type Category, getProducts } from "@/lib/products";
+import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@/lib/i18n";
 import { ProductCard } from "@/components/ProductCard";
 
@@ -19,9 +20,11 @@ type PriceFilter = "all" | "under" | "mid" | "over";
 function ProductsPage() {
   const { t, lang } = useI18n();
   const [cat, setCat] = React.useState<Category | "all">("all");
-  const [price, setPrice] = React.useState<PriceFilter>("all");
+  const [price, setPrice] = React.useState<"all" | "under" | "mid" | "over">("all");
 
-  const filtered = PRODUCTS.filter((p) => {
+  const { data: products = [], isLoading } = useQuery({ queryKey: ["products"], queryFn: getProducts });
+
+  const filtered = products.filter((p) => {
     if (cat !== "all" && p.category !== cat) return false;
     if (price === "under" && p.price >= 500000) return false;
     if (price === "mid" && (p.price < 500000 || p.price > 2000000)) return false;
@@ -102,8 +105,15 @@ function ProductsPage() {
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
-          {filtered.length === 0 && (
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-8">{t("no_match")}</p>
+          {isLoading && (
+            <div className="py-20 text-center text-sm text-neutral-500 dark:text-neutral-400">
+              Loading products...
+            </div>
+          )}
+          {!isLoading && filtered.length === 0 && (
+            <div className="py-20 text-center text-sm text-neutral-500 dark:text-neutral-400">
+              {t("no_match")}
+            </div>
           )}
         </div>
       </div>

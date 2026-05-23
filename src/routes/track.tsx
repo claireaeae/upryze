@@ -3,8 +3,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
 import { Order, OrderStatus } from "@/lib/orders";
 import { useI18n } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
 import { Search, Package, Clock, Truck, CheckCircle, XCircle } from "lucide-react";
-import { formatPrice, PRODUCTS } from "@/lib/products";
+import { formatPrice, getProducts } from "@/lib/products";
 
 export const Route = createFileRoute("/track")({
   head: () => ({ meta: [{ title: "Track Order — Upryze" }] }),
@@ -21,6 +22,7 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; labelVi: string; color
 
 function TrackPage() {
   const { lang, t } = useI18n();
+  const { data: products = [] } = useQuery({ queryKey: ["products"], queryFn: getProducts });
   const [orderId, setOrderId] = React.useState("");
   const [order, setOrder] = React.useState<Order | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -143,8 +145,8 @@ function TrackPage() {
             <div>
               <p className="text-[10px] tracking-widest uppercase text-neutral-400 mb-4">{lang === "vi" ? "Sản phẩm" : "Items"}</p>
               <ul className="space-y-4">
-                {order.items.map((item) => {
-                  const product = PRODUCTS.find((p) => p.id === item.id);
+                {order.items.map((item, i) => {
+                  const product = products.find((p) => p.id === item.id);
                   if (!product) return null;
                   return (
                     <li key={item.id} className="flex gap-4">
