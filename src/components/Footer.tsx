@@ -30,7 +30,7 @@ export function Footer() {
         <div>
           <p className="font-medium mb-3">{t("f_contact")}</p>
           <ul className="space-y-2 text-neutral-500 dark:text-neutral-400">
-            <li>hello@upryze.com</li>
+            <li>upryze.hcm@gmail.com</li>
             <li>+84 000 000 000</li>
             <li>{t("address_label")}: Ho Chi Minh City, VN</li>
             <li>
