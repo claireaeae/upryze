@@ -130,6 +130,10 @@ function IndexPage() {
     <div>
       {/* 👉 KHU VỰC BANNER TRANG CHỦ (HERO) */}
       <section className="max-w-7xl mx-auto px-6 lg:px-12 pt-24 pb-32">
+        {/* 👉 HƯỚNG DẪN THÊM ẢNH: 
+            1. Copy file ảnh của bạn vào thư mục 'public' (ví dụ: public/banner.jpg)
+            2. Thêm dòng code sau vào vị trí bạn muốn hiện ảnh: <img src="/banner.jpg" alt="Ảnh banner" className="w-full rounded-lg mt-8" />
+        */}
         {/* 👉 ĐỔI KÍCH CỠ CHỮ TIÊU ĐỀ: Thay 'text-5xl' thành 'text-6xl' v.v. */}
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[0.95] whitespace-pre-line">
           {t("hero_title")}
