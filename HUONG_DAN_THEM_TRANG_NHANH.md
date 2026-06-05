@@ -47,9 +47,21 @@ function AboutPage() {
 
 ---
 
-## BƯỚC 3: SHOW KẾT QUẢ
+## BƯỚC 3: SHOW KẾT QUẢ TẠI MÁY (LOCAL)
 1. Mở trình duyệt đang chạy `http://localhost:5173`.
 2. Bạn sẽ thấy chữ **"Giới thiệu"** đã xuất hiện trên thanh Menu.
 3. Bấm vào chữ "Giới thiệu", trang web sẽ ngay lập tức chuyển sang giao diện bạn vừa tạo! 
+
+---
+
+## BƯỚC 4: ĐẨY LÊN MẠNG CHO CẢ THẾ GIỚI XEM (PUBLIC)
+Để chứng minh cho cô thấy trang web thật cũng cập nhật ngay lập tức:
+1. Mở Terminal (bấm `Ctrl + ~` nếu chưa thấy).
+2. Gõ lần lượt 3 lệnh quen thuộc:
+   - `git add .`
+   - `git commit -m "Thêm trang Giới thiệu cực nhanh"`
+   - `git push`
+3. Mở trang web thật (`https://upryzestore.vercel.app`), chờ khoảng 20-30 giây cho Vercel chạy xong, rồi bấm tải lại trang (F5).
+4. Menu "Giới thiệu" đã chính thức lên sóng mạng toàn cầu!
 
 **Chúc bạn lấy trọn điểm 10 thực hành!**
