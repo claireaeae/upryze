@@ -34,7 +34,7 @@ export function Footer() {
             <li>+84 000 000 000</li>
             <li>{t("address_label")}: Ho Chi Minh City, VN</li>
             <li>
-              <a href="https://facebook.com/upryze" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-50">
+              <a href="https://www.facebook.com/share/1DoTPUca58/?mibextid=wwXIfr" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-50">
                 {t("facebook")} ↗
               </a>
             </li>
