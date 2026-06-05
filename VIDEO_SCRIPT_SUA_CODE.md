@@ -50,8 +50,13 @@
 **(Chỉ chuột vào khu vực Terminal đen đen ở dưới cùng VS Code)**
 🗣️ **Thoại kết thúc:** 
 > "Sau khi sửa web trên máy tính mình xong và thấy ưng ý rồi, bước cuối cùng là đẩy nó lên mạng thật để cô chấm điểm.
-> Mọi người nhìn xuống cái bảng đen đen tên là Terminal ở dưới này nè. Mọi người gõ lần lượt 3 câu thần chú này rồi Enter là xong:
-> - Đầu tiên gõ: `git add .` (Nhớ có dấu chấm nha)
-> - Tiếp theo gõ: `git commit -m "Sửa bài cho cô xem"`
-> - Cuối cùng gõ: `git push`
+> Mọi người nhìn xuống cái bảng đen đen tên là Terminal ở dưới này nè. 
+> 
+> **⚠️ LƯU Ý QUAN TRỌNG TRƯỚC KHI GÕ:** Phải chắc chắn cái chữ ở đầu dòng trong Terminal kết thúc bằng `deepwork-upryze-suite-main>`. Nếu nó chỉ ghi `upryze>` thì mọi người phải gõ lệnh `cd deepwork-upryze-suite-main` rồi Enter để đi vào đúng cửa nha.
+> 
+> Sau đó, mọi người gõ lần lượt 3 câu thần chú này, mỗi câu gõ xong nhớ bấm Enter:
+> - **Lệnh 1:** `git add .` *(Lệnh này có khoảng trắng và dấu chấm. Ý nghĩa của nó là gom tất cả các file nãy giờ mình sửa bỏ vô một cái thùng hàng).*
+> - **Lệnh 2:** `git commit -m "Sửa bài cho cô xem"` *(Lệnh này là dán cái nhãn lên thùng hàng để biết bên trong chứa cái gì. Bạn ghi chữ gì trong ngoặc kép cũng được).*
+> - **Lệnh 3:** `git push` *(Lệnh này giống như giao cho shipper mang cái thùng hàng đó quăng lên mạng GitHub).*
+> 
 > Đợi xíu cho nó chạy xong là mọi người có thể tự tin mở trang web thật của nhóm mình lên, bấm F5 là mọi thứ đã cập nhật y chang! Dễ ẹc đúng không? Chúc mấy bà / mấy ông tự tin thuyết trình nha!"
