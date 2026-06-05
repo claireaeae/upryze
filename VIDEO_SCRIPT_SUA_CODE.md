@@ -1,44 +1,58 @@
-# 🎬 KỊCH BẢN QUAY VIDEO CÁCH SỬ DỤNG TÀI LIỆU ĐỂ SỬA CODE
+# 🎬 KỊCH BẢN QUAY VIDEO HƯỚNG DẪN TEAM SỬA CODE (INTERNAL)
 
-**Mục tiêu video:** Chỉ cho các bạn trong nhóm (và cho giáo viên thấy) hệ thống tài liệu cực kỳ dễ hiểu của nhóm. Bất kỳ ai, dù không rành code, chỉ cần biết "Đọc và Làm Theo" là có thể tự sửa được website.
-**Thời lượng dự kiến:** 3 phút.
-**Chuẩn bị:** Mở VS Code (bật sẵn danh sách file bên trái), và mở trình duyệt web chạy `http://localhost:5173`.
+**Mục tiêu:** Video nội bộ gửi cho các bạn trong nhóm (những bạn không biết code) xem để tự biết cách mở VS Code lên, tự sửa chữ, sửa màu và tự đẩy lên mạng.
+**Giọng điệu:** Bạn bè, siêu chậm, siêu dễ hiểu. Chỉ đâu bấm đó.
+**Thời lượng:** Khoảng 3 - 4 phút.
+**Chuẩn bị:** Mở sẵn VS Code (bên trái là danh sách file), Mở sẵn trình duyệt web chạy `http://localhost:5173`.
 
 ---
 
-## 🎬 CẢNH 1: GIỚI THIỆU HỆ THỐNG "PHAOCỨU SINH" (45 giây)
+## 🎬 BƯỚC 1: GIỚI THIỆU 2 TÀI LIỆU "CỨU MẠNG" (45 giây)
 
-**(Mở VS Code, trỏ chuột vào file `DANH_SACH_FILE_GIAO_DIEN.md` ở cột bên trái và bấm mở nó ra)**
+**(Mở VS Code lên, phóng to cột chứa file bên trái)**
 🗣️ **Thoại:** 
-> "Chào mọi người. Để giải quyết bài toán tự xây dựng code 100% nhưng vẫn phải đảm bảo tính dễ sử dụng (như kéo thả Wix), nhóm mình đã viết ra một bộ tài liệu hướng dẫn cực kỳ chi tiết, nhúng thẳng vào trong mã nguồn. 
-> Khi mở VS Code, mọi người sẽ thấy ngay file `DANH_SACH_FILE_GIAO_DIEN.md`. File này chính là một 'Bản đồ'. Nó chỉ đích danh muốn sửa chỗ nào thì mở đúng file đó. Ví dụ: Sửa chữ thì mở `i18n.tsx`, sửa thẻ sản phẩm thì mở `ProductCard.tsx`. Không cần phải mò mẫm!"
+> "Hello mọi người. Nhóm mình code web bằng React nghe có vẻ đáng sợ, nhưng thực ra sửa nó cực kỳ dễ như xài Word thôi. Để mọi người ai cũng sửa được lúc lên thuyết trình, tui đã chuẩn bị sẵn 2 file Bí Kíp nằm ngay ngoài cùng của VS Code đây:
+> 
+> 1. File thứ nhất là `DANH_SACH_FILE_GIAO_DIEN.md`: Chứa bản đồ chỉ đường. Mọi người muốn sửa chữ, sửa ảnh hay sửa màu ở khúc nào trên web thì cứ mở file này lên, nó sẽ bảo mọi người bấm vào file code nào.
+> 2. File thứ hai là `HUONG_DAN_THEM_TRANG_NHANH.md`: Cái này để phòng hờ cô bắt tạo thêm 1 trang web mới tinh. Trong này tui viết sẵn code rồi, tí nữa tui sẽ làm mẫu cách copy-paste."
 
 ---
 
-## 🎬 CẢNH 2: THỰC HÀNH 1 - DÙNG BẢN ĐỒ ĐỂ SỬA CHỮ VÀ MÀU SẮC (1.5 phút)
+## 🎬 BƯỚC 2: THỰC HÀNH SỬA CHỮ VÀ MÀU SẮC (1.5 phút)
 
 **(Vẫn ở màn hình VS Code)**
 🗣️ **Thoại:** 
-> "Bây giờ mình sẽ thực hành mẫu. Giả sử giáo viên yêu cầu đổi tên Logo và màu sắc của thanh Menu trên cùng."
+> "Bây giờ tui làm mẫu sửa giao diện nha. Giả sử cô giáo kêu 'Đổi cái chữ Logo UPRYZE thành chữ khác và đổi màu thanh Menu đi'.
+> Theo cái 'bản đồ' lúc nãy, để sửa thanh Menu thì mình phải mở thư mục `src`, vào thư mục `components`, rồi bấm đúp chuột vào file `Navbar.tsx`."
 
 👉 **Hành động & Thoại tiếp:** 
-1. "Theo bản đồ, để sửa Menu thì mình cần mở file `Navbar.tsx`. Mình bấm vào thư mục `src` -> `components` -> `Navbar.tsx`."
-2. *(Mở file Navbar.tsx lên, lướt chuột xuống dòng chữ xanh lá `// 👉 ĐỔI TÊN LOGO Ở ĐÂY`)*. "Ngay trong code, nhóm mình đã để sẵn các biển báo hướng dẫn bằng Tiếng Việt. Ở đây có hướng dẫn đổi tên Logo. Mình sẽ đổi chữ `UPRYZE` thành `DEMO STORE`." *(Gõ chữ DEMO STORE)*.
-3. *(Lướt xuống dòng chữ xanh lá `// 👉 ĐỔI MÀU CHỮ MENU Ở ĐÂY`)*. "Và đây là hướng dẫn đổi màu chữ. Mình sẽ đổi `text-neutral-600` thành `text-red-500` để các bạn dễ thấy." *(Sửa chữ và bấm Ctrl + S để lưu)*.
+1. *(Mở file Navbar.tsx lên, cuộn chuột từ từ)*. "Mọi người cứ kéo từ từ xuống. Thấy không? Tui đã rải đầy các ghi chú Tiếng Việt màu xanh lá cây (hoặc xám) bắt đầu bằng dòng chữ `👉 ĐỔI TÊN LOGO Ở ĐÂY`. Mọi người KHÔNG CẦN hiểu mấy dòng code tiếng Anh xung quanh làm gì, cứ thấy tiếng Việt bảo sao làm vậy."
+2. "Ở đây tui xóa chữ `UPRYZE` đổi thành `NHÓM 1 DEMO`. Rồi bấm `Ctrl + S` trên bàn phím để lưu lại."
+3. *(Lướt xuống dòng ghi chú `👉 ĐỔI MÀU CHỮ MENU Ở ĐÂY`)*. "Chỗ này để đổi màu nè, tui đổi chữ `text-neutral-600` thành `text-red-500` nha. Rồi lại bấm `Ctrl + S`."
 
-**(Mở trình duyệt `localhost:5173` lên để xem kết quả)**
+**(Chuyển qua cửa sổ trình duyệt đang mở web)**
 🗣️ **Thoại:** 
-> "Mình bật trình duyệt lên. Vì web dùng công nghệ Hot Reload, mọi thứ tự cập nhật. Logo đã biến thành `DEMO STORE` và chữ trên menu đã chuyển sang màu đỏ mà không cần tải lại trang."
+> "Giờ bật web lên coi thử nè. Bùm! Chữ đã đổi thành NHÓM 1 DEMO và menu thành màu đỏ luôn. Không cần bấm F5 tải lại trang gì hết á."
 
 ---
 
-## 🎬 CẢNH 3: GIỚI THIỆU BÍ KÍP THÊM TRANG MỚI VÀ KẾT THÚC (45 giây)
+## 🎬 BƯỚC 3: COPY-PASTE ĐỂ TẠO TRANG MỚI (1 phút)
 
-**(Mở VS Code, bấm vào file `HUONG_DAN_THEM_TRANG_NHANH.md`)**
+**(Quay lại VS Code, mở file `HUONG_DAN_THEM_TRANG_NHANH.md` ra)**
 🗣️ **Thoại:** 
-> "Chưa hết, nếu có bài test bất ngờ yêu cầu tạo hẳn một trang web mới tinh (ví dụ trang About Us) thì sao? Nhóm mình cũng đã chuẩn bị sẵn file `HUONG_DAN_THEM_TRANG_NHANH.md`. 
-> Trong này có sẵn đoạn code mẫu. Chỉ cần tạo file `about.tsx`, copy-paste đoạn code này vào, rồi copy 1 dòng duy nhất dán lên `Navbar.tsx` là xong toàn bộ quá trình, mất chưa tới 30 giây."
+> "Lỡ mà cô bắt tạo một trang mới thì sao? Đừng hoảng. Mọi người mở cái file `HUONG_DAN_THEM_TRANG_NHANH.md` này lên. Trong này có 3 bước siêu ngắn:
+> Đầu tiên là tạo file `about.tsx` trong thư mục `src/routes/`. Rồi bôi đen toàn bộ đoạn code mẫu tui để sẵn, Copy, rồi Paste vô file `about.tsx` vừa tạo. Nhớ bấm `Ctrl + S`.
+> Xong rồi copy cái dòng số 2 dán vô file `Navbar.tsx` để nó hiện lên Menu. Bấm `Ctrl + S`. Vậy là xong! Mọi người cứ làm y chang như tui gõ là ăn điểm tuyệt đối." *(Vừa nói vừa làm mẫu thật nhanh thao tác copy-paste)*.
 
-**(Chỉ chuột vào khu vực Terminal dưới cùng của VS Code)**
+---
+
+## 🎬 BƯỚC 4: LƯU LÊN MẠNG CHO CÔ XEM (30 giây)
+
+**(Chỉ chuột vào khu vực Terminal đen đen ở dưới cùng VS Code)**
 🗣️ **Thoại kết thúc:** 
-> "Sau khi sửa xong, mình chỉ việc gõ lệnh `git push` ở dưới Terminal này, toàn bộ sửa đổi sẽ được đưa lên GitHub và Vercel sẽ tự động xuất bản lên mạng cho khách hàng. Hệ thống này giúp team hoàn toàn làm chủ website với chi phí 0 đồng mà vẫn cực kỳ dễ quản lý. Cảm ơn mọi người đã theo dõi!"
+> "Sau khi sửa web trên máy tính mình xong và thấy ưng ý rồi, bước cuối cùng là đẩy nó lên mạng thật để cô chấm điểm.
+> Mọi người nhìn xuống cái bảng đen đen tên là Terminal ở dưới này nè. Mọi người gõ lần lượt 3 câu thần chú này rồi Enter là xong:
+> - Đầu tiên gõ: `git add .` (Nhớ có dấu chấm nha)
+> - Tiếp theo gõ: `git commit -m "Sửa bài cho cô xem"`
+> - Cuối cùng gõ: `git push`
+> Đợi xíu cho nó chạy xong là mọi người có thể tự tin mở trang web thật của nhóm mình lên, bấm F5 là mọi thứ đã cập nhật y chang! Dễ ẹc đúng không? Chúc mấy bà / mấy ông tự tin thuyết trình nha!"
