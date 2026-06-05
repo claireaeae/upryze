@@ -2,6 +2,10 @@ import * as React from "react";
 import type { Lang } from "./products";
 
 const DICT = {
+  // 🌍 [HƯỚNG DẪN THAY ĐỔI VĂN BẢN (TEXT) TRÊN TOÀN BỘ WEBSITE]
+  // Đây là bộ từ điển của trang web. 
+  // Muốn sửa bất kỳ chữ gì trên web (Tiếng Anh hay Tiếng Việt), bạn chỉ cần tìm đúng chữ đó ở dưới và sửa chữ ở trong ngoặc kép ("").
+  // Tuyệt đối KHÔNG SỬA các chữ ở bên trái dấu hai chấm (ví dụ: nav_home).
   en: {
     nav_home: "Home", nav_products: "Products", nav_faq: "FAQ", nav_track: "Track Order",
     btn_add: "Add to Cart", btn_checkout: "Checkout", btn_submit: "Submit",

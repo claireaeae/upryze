@@ -128,12 +128,15 @@ function IndexPage() {
 
   return (
     <div>
+      {/* 👉 KHU VỰC BANNER TRANG CHỦ (HERO) */}
       <section className="max-w-7xl mx-auto px-6 lg:px-12 pt-24 pb-32">
+        {/* 👉 ĐỔI KÍCH CỠ CHỮ TIÊU ĐỀ: Thay 'text-5xl' thành 'text-6xl' v.v. */}
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[0.95] whitespace-pre-line">
           {t("hero_title")}
         </h1>
         <p className="mt-8 text-lg text-neutral-500 dark:text-neutral-400 max-w-xl">{t("hero_sub")}</p>
         <div className="mt-10">
+          {/* 👉 ĐỔI MÀU NÚT "MUA NGAY": Thay 'bg-neutral-900' bên dưới thành màu khác */}
           <Link
             to="/products"
             className="inline-flex items-center gap-2 bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-8 py-4 text-sm tracking-wider uppercase hover:opacity-90 transition-opacity"
