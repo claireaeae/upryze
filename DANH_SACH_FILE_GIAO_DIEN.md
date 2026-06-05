@@ -34,7 +34,9 @@ Tùy vào việc bạn đang xem trang nào trên web mà mở file đó:
 
 ---
 
-## 4. MỤC "LINH KIỆN NHỎ" (THẺ SẢN PHẨM)
+## 4. MỤC "LINH KIỆN NHỎ" (THẺ SẢN PHẨM & GIỎ HÀNG)
+- 📄 **File Thanh Giỏ Hàng:** `src/components/CartDrawer.tsx`
+  - *Dùng để:* Sửa giao diện cái giỏ hàng trượt từ bên phải ra (Đổi màu nút Thanh toán, đổi chữ Tổng tiền).
 - 📄 **File Thẻ Sản Phẩm:** `src/components/ProductCard.tsx`
   - *Dùng để:* Chỉnh sửa cái Thẻ hình vuông chứa Ảnh + Giá tiền sản phẩm. Bất cứ khi nào bạn thấy thẻ sản phẩm này xuất hiện (Ở trang chủ hay ở Trang danh sách), nó đều dùng chung file này. Nếu bạn đổi nền thẻ thành màu Đỏ trong file này, thì mọi thẻ sản phẩm trên toàn website đều biến thành màu đỏ!
 

@@ -22,17 +22,16 @@
 
 **(Vẫn ở màn hình VS Code)**
 🗣️ **Thoại:** 
-> "Bây giờ tui làm mẫu sửa giao diện nha. Giả sử cô giáo kêu 'Đổi cái chữ Logo UPRYZE thành chữ khác và đổi màu thanh Menu đi'.
-> Theo cái 'bản đồ' lúc nãy, để sửa thanh Menu thì mình phải mở thư mục `src`, vào thư mục `components`, rồi bấm đúp chuột vào file `Navbar.tsx`."
+> "Bây giờ tui làm mẫu sửa giao diện nha. Giả sử cô giáo kêu 'Đổi màu nút Thanh toán trong Giỏ hàng đi'.
+> Theo cái 'bản đồ' lúc nãy, để sửa Giỏ hàng thì mình phải mở thư mục `src`, vào thư mục `components`, rồi bấm đúp chuột vào file `CartDrawer.tsx`."
 
 👉 **Hành động & Thoại tiếp:** 
-1. *(Mở file Navbar.tsx lên, cuộn chuột từ từ)*. "Mọi người cứ kéo từ từ xuống. Thấy không? Tui đã rải đầy các ghi chú Tiếng Việt màu xanh lá cây (hoặc xám) bắt đầu bằng dòng chữ `👉 ĐỔI TÊN LOGO Ở ĐÂY`. Mọi người KHÔNG CẦN hiểu mấy dòng code tiếng Anh xung quanh làm gì, cứ thấy tiếng Việt bảo sao làm vậy."
-2. "Ở đây tui xóa chữ `UPRYZE` đổi thành `NHÓM 1 DEMO`. Rồi bấm `Ctrl + S` trên bàn phím để lưu lại."
-3. *(Lướt xuống dòng ghi chú `👉 ĐỔI MÀU CHỮ MENU Ở ĐÂY`)*. "Chỗ này để đổi màu nè, tui đổi chữ `text-neutral-600` thành `text-red-500` nha. Rồi lại bấm `Ctrl + S`."
+1. *(Mở file CartDrawer.tsx lên, cuộn chuột từ từ xuống dưới cùng)*. "Mọi người cứ kéo từ từ xuống. Thấy không? Tui đã rải sẵn ghi chú Tiếng Việt màu xanh lá cây: `👉 ĐỔI MÀU NÚT THANH TOÁN (CHECKOUT) TRONG GIỎ HÀNG`. Mọi người KHÔNG CẦN hiểu code, cô bảo sao sửa vậy."
+2. "Ở dòng ngay bên dưới, tui sẽ đổi chữ `bg-neutral-900` thành `bg-green-600` (Màu xanh lá cây) nha. Rồi bấm `Ctrl + S` trên bàn phím để lưu lại."
 
 **(Chuyển qua cửa sổ trình duyệt đang mở web)**
 🗣️ **Thoại:** 
-> "Giờ bật web lên coi thử nè. Bùm! Chữ đã đổi thành NHÓM 1 DEMO và menu thành màu đỏ luôn. Không cần bấm F5 tải lại trang gì hết á."
+> "Giờ bật web lên coi thử nè. Bấm vào icon Giỏ hàng một phát! Bùm! Nút Thanh toán đã chuyển sang màu xanh lá cây cái rụp mà không cần F5 tải lại trang gì hết á."
 
 ---
 

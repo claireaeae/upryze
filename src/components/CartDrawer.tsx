@@ -61,6 +61,7 @@ export function CartDrawer() {
             <span className="text-neutral-500 dark:text-neutral-400">{t("subtotal")}</span>
             <span className="font-medium tabular-nums">{formatPrice(subtotal)}</span>
           </div>
+          {/* 👉 ĐỔI MÀU NÚT THANH TOÁN (CHECKOUT) TRONG GIỎ HÀNG: Thay 'bg-neutral-900' thành màu khác (ví dụ: 'bg-green-600') */}
           <Link
             to="/checkout"
             onClick={() => setOpen(false)}
