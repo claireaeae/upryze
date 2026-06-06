@@ -65,7 +65,7 @@ export function CartDrawer() {
           <Link
             to="/checkout"
             onClick={() => setOpen(false)}
-            className="block w-full text-center bg-green-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 py-3 text-sm tracking-wider hover:opacity-90 transition-opacity aria-disabled:opacity-40 aria-disabled:pointer-events-none uppercase"
+            className="block w-full text-center bg-black-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 py-3 text-sm tracking-wider hover:opacity-90 transition-opacity aria-disabled:opacity-40 aria-disabled:pointer-events-none uppercase"
             aria-disabled={detailed.length === 0}
           >
             {t("btn_checkout")}

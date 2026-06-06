@@ -37,7 +37,7 @@ export function ProductCard({ product }: { product: Product }) {
       {/* 👉 ĐỔI MÀU NÚT THÊM VÀO GIỎ HÀNG: Thay 'bg-white' thành 'bg-blue-500' v.v. */}
       <button
         onClick={handleQuickAdd}
-        className="absolute bottom-4 right-4 h-10 w-10 bg-blue-500 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer translate-y-2 group-hover:translate-y-0"
+        className="absolute bottom-4 right-4 h-10 w-10 bg-green-500 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer translate-y-2 group-hover:translate-y-0"
         title={lang === "vi" ? "Mua ngay" : "Quick add"}
       >
         <ShoppingCart className="h-4 w-4" />
