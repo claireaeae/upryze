@@ -59,7 +59,7 @@ function FaqPage() {
               )}
             </div>
           );
-        })}
+        }))}
       </div>
 
       <section className="mt-24 border border-neutral-200 dark:border-neutral-800 p-8 md:p-12">
