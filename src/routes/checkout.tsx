@@ -190,14 +190,14 @@ function CheckoutPage() {
                       <p className="text-sm font-medium leading-snug line-clamp-2">{product[lang].name}</p>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">× {qty}</p>
                     </div>
-                    <p className="text-sm tabular-nums flex-shrink-0">{formatPrice(product.price * qty)}</p>
+                    <p className="text-sm tabular-nums flex-shrink-0">{formatPrice(product.price * qty, lang)}</p>
                   </li>
                 ))}
               </ul>
               <div className="mt-4 space-y-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-neutral-500 dark:text-neutral-400">{lang === "vi" ? "Tạm tính" : "Subtotal"}</span>
-                  <span className="tabular-nums">{formatPrice(subtotal)}</span>
+                  <span className="tabular-nums">{formatPrice(subtotal, lang)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-neutral-500 dark:text-neutral-400">{lang === "vi" ? "Vận chuyển" : "Shipping"}</span>
@@ -205,7 +205,7 @@ function CheckoutPage() {
                 </div>
                 <div className="flex items-center justify-between text-base font-semibold pt-3 border-t border-neutral-200 dark:border-neutral-800">
                   <span>{t("total")}</span>
-                  <span className="tabular-nums">{formatPrice(subtotal)}</span>
+                  <span className="tabular-nums">{formatPrice(subtotal, lang)}</span>
                 </div>
               </div>
             </>

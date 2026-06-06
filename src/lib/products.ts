@@ -14,8 +14,12 @@ export type Product = {
   vi: { name: string; categoryLabel: string; description: string; features: string[] };
 };
 
-export const formatPrice = (p: number) =>
-  new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(p);
+export const formatPrice = (p: number, lang: string = "vi") => {
+  if (lang === "en") {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(p / 25000);
+  }
+  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(p);
+};
 
 function mapRowToProduct(row: any): Product {
   return {

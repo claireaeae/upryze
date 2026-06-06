@@ -132,7 +132,7 @@ function OrderCard({ order, onStatusChange, onDelete, products }: {
   const [expanded, setExpanded] = React.useState(false);
   const [confirmDelete, setConfirmDelete] = React.useState(false);
 
-  const total = formatPrice(order.total);
+  const total = formatPrice(order.total, "en");
   const date = new Date(order.createdAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
   return (
@@ -187,7 +187,7 @@ function OrderCard({ order, onStatusChange, onDelete, products }: {
                     <img src={product.image} alt={product.en.name} className="h-10 w-10 object-cover flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm truncate">{product.en.name}</p>
-                      <p className="text-xs text-neutral-500">× {item.qty} · {formatPrice(product.price * item.qty)}</p>
+                      <p className="text-xs text-neutral-500">× {item.qty} · {formatPrice(product.price * item.qty, "en")}</p>
                     </div>
                   </div>
                 );
@@ -427,7 +427,7 @@ function ProductManager({ products }: { products: Product[] }) {
               <tr key={p.id}>
                 <td className="px-5 py-3"><img src={p.image} alt={p.en.name} loading="lazy" className="h-10 w-10 object-cover" /></td>
                 <td className="px-5 py-3 font-medium">{p.en.name}</td>
-                <td className="px-5 py-3 tabular-nums">{formatPrice(p.price)}</td>
+                <td className="px-5 py-3 tabular-nums">{formatPrice(p.price, "en")}</td>
                 <td className="px-5 py-3 text-right space-x-2">
                   <button onClick={() => startEdit(p)} className="p-1.5 text-neutral-500 hover:text-blue-500 transition-colors"><Edit2 className="h-4 w-4" /></button>
                   <button onClick={() => handleDelete(p.id)} className="p-1.5 text-neutral-500 hover:text-red-500 transition-colors"><Trash2 className="h-4 w-4" /></button>
@@ -607,7 +607,7 @@ function Dashboard() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
               {[
                 { label: "Total Orders", value: String(orders.length), icon: ShoppingBag, sub: "All time" },
-                { label: "Revenue", value: formatPrice(totalRevenue), icon: TrendingUp, sub: "Excl. cancelled" },
+                { label: "Revenue", value: formatPrice(totalRevenue, "en"), icon: TrendingUp, sub: "Excl. cancelled" },
                 { label: "Pending", value: String(pendingCount), icon: Clock, sub: "Need action" },
                 { label: "Delivered", value: String(deliveredCount), icon: CheckCircle, sub: "Completed" },
               ].map(({ label, value, icon: Icon, sub }) => (

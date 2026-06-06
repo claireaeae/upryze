@@ -35,7 +35,7 @@ export function CartDrawer() {
                   <img src={product.image} alt={product[lang].name} className="w-20 h-20 object-cover" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{product[lang].name}</p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 tabular-nums">{formatPrice(product.price)}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 tabular-nums">{formatPrice(product.price, lang)}</p>
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center border border-neutral-200 dark:border-neutral-800">
                         <button onClick={() => setQty(product.id, qty - 1)} className="p-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900" aria-label="Decrease">
@@ -59,7 +59,7 @@ export function CartDrawer() {
         <div className="border-t border-neutral-200 dark:border-neutral-800 p-6 space-y-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-neutral-500 dark:text-neutral-400">{t("subtotal")}</span>
-            <span className="font-medium tabular-nums">{formatPrice(subtotal)}</span>
+            <span className="font-medium tabular-nums">{formatPrice(subtotal, lang)}</span>
           </div>
           {/* 👉 ĐỔI MÀU NÚT THANH TOÁN (CHECKOUT) TRONG GIỎ HÀNG: Thay 'bg-neutral-900' thành màu khác (ví dụ: 'bg-green-600') */}
           <Link

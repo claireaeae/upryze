@@ -157,7 +157,7 @@ function TrackPage() {
                         <p className="text-sm font-medium line-clamp-1">{product[lang].name}</p>
                         <p className="text-xs text-neutral-500 mt-1">× {item.qty}</p>
                       </div>
-                      <p className="text-sm tabular-nums flex-shrink-0">{formatPrice(product.price * item.qty)}</p>
+                      <p className="text-sm tabular-nums flex-shrink-0">{formatPrice(product.price * item.qty, lang)}</p>
                     </li>
                   );
                 })}
@@ -167,7 +167,7 @@ function TrackPage() {
 
           <div className="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
             <p className="text-sm font-medium uppercase tracking-widest">{lang === "vi" ? "Tổng cộng" : "Total"}</p>
-            <p className="text-xl font-semibold tabular-nums">{formatPrice(order.total)}</p>
+            <p className="text-xl font-semibold tabular-nums">{formatPrice(order.total, lang)}</p>
           </div>
         </div>
       )}

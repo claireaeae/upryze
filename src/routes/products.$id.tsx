@@ -133,9 +133,9 @@ function ProductDetail() {
 
           {/* Price */}
           <div className="mt-5 flex items-baseline gap-3">
-            <p className="text-2xl tabular-nums font-semibold">{formatPrice(product.price)}</p>
+            <p className="text-2xl tabular-nums font-semibold">{formatPrice(product.price, lang)}</p>
             {product.originalPrice && product.originalPrice > product.price && (
-              <p className="text-base text-neutral-400 dark:text-neutral-500 line-through tabular-nums">{formatPrice(product.originalPrice)}</p>
+              <p className="text-base text-neutral-400 dark:text-neutral-500 line-through tabular-nums">{formatPrice(product.originalPrice, lang)}</p>
             )}
             {product.originalPrice && product.originalPrice > product.price && (
               <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">

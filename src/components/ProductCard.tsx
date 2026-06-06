@@ -27,9 +27,9 @@ export function ProductCard({ product }: { product: Product }) {
           <p className="text-[10px] tracking-widest uppercase text-neutral-500 dark:text-neutral-400 mb-1">{product[lang].categoryLabel}</p>
           <p className="text-sm font-medium leading-snug">{product[lang].name}</p>
           <div className="mt-1 flex items-center gap-2">
-            <p className="text-sm text-neutral-900 dark:text-neutral-50 tabular-nums">{formatPrice(product.price)}</p>
+            <p className="text-sm text-neutral-900 dark:text-neutral-50 tabular-nums">{formatPrice(product.price, lang)}</p>
             {product.originalPrice && (
-              <p className="text-xs text-neutral-400 line-through tabular-nums">{formatPrice(product.originalPrice)}</p>
+              <p className="text-xs text-neutral-400 line-through tabular-nums">{formatPrice(product.originalPrice, lang)}</p>
             )}
           </div>
         </div>
