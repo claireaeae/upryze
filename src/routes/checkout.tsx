@@ -30,9 +30,10 @@ function CheckoutPage() {
     if (detailed.length === 0) return;
     setSubmitting(true);
 
+    let createdOrderId = "";
     // Save order to Supabase
     try {
-      await saveOrder({
+      const orderResult = await saveOrder({
         customer: {
           name: form.name,
           email: form.email,
@@ -45,6 +46,7 @@ function CheckoutPage() {
         total: subtotal,
         paymentMethod: paymentMethod,
       });
+      createdOrderId = orderResult.orderId;
     } catch (error) {
       console.error("Failed to save order", error);
       alert("Failed to submit order. Please try again.");
@@ -55,7 +57,7 @@ function CheckoutPage() {
     clear();
     // Small delay for UX feel
     await new Promise((r) => setTimeout(r, 800));
-    navigate({ to: "/checkout-success" });
+    navigate({ to: "/checkout-success", search: { orderId: createdOrderId } });
   };
 
   const inputCls = "w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-50 transition-colors placeholder:text-neutral-400 dark:placeholder:text-neutral-600";
