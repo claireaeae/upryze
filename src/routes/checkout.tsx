@@ -20,6 +20,7 @@ function CheckoutPage() {
     email: "", phone: "", name: "", address: "", city: "", note: "",
   });
   const [submitting, setSubmitting] = React.useState(false);
+  const [paymentMethod, setPaymentMethod] = React.useState<"cod" | "qr">("cod");
 
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -42,7 +43,7 @@ function CheckoutPage() {
         },
         items: detailed.map((d) => ({ id: d.product.id, qty: d.qty })),
         total: subtotal,
-        paymentMethod: "cod",
+        paymentMethod: paymentMethod,
       });
     } catch (error) {
       console.error("Failed to save order", error);
@@ -73,18 +74,53 @@ function CheckoutPage() {
         <form onSubmit={onSubmit} className="space-y-10">
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">{t("checkout_title")}</h1>
 
-          {/* Payment method — COD only */}
-          <div className="border border-neutral-200 dark:border-neutral-800 p-5 flex items-center gap-4 bg-neutral-100 dark:bg-neutral-900">
-            <Truck className="h-5 w-5 flex-shrink-0 text-neutral-600 dark:text-neutral-400" />
-            <div>
-              <p className="text-sm font-medium">{lang === "vi" ? "Thanh toán khi nhận hàng (COD)" : "Cash on Delivery (COD)"}</p>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                {lang === "vi" ? "Kiểm tra hàng trước khi thanh toán." : "Inspect your order before paying."}
-              </p>
-            </div>
-            <div className="ml-auto h-4 w-4 rounded-full border-2 border-neutral-900 dark:border-neutral-50 flex items-center justify-center flex-shrink-0">
-              <div className="h-2 w-2 rounded-full bg-neutral-900 dark:bg-neutral-50" />
-            </div>
+          {/* Payment method selection */}
+          <div className="space-y-4">
+            <p className="text-xs tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400">Phương thức thanh toán</p>
+            
+            {/* COD Option */}
+            <label className={`border p-5 flex items-center gap-4 cursor-pointer transition-colors ${paymentMethod === "cod" ? "border-neutral-900 dark:border-neutral-50 bg-neutral-100 dark:bg-neutral-900" : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"}`}>
+              <input type="radio" name="payment" value="cod" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} className="sr-only" />
+              <Truck className="h-5 w-5 flex-shrink-0 text-neutral-600 dark:text-neutral-400" />
+              <div>
+                <p className="text-sm font-medium">{lang === "vi" ? "Thanh toán khi nhận hàng (COD)" : "Cash on Delivery (COD)"}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                  {lang === "vi" ? "Kiểm tra hàng trước khi thanh toán." : "Inspect your order before paying."}
+                </p>
+              </div>
+              <div className="ml-auto h-4 w-4 rounded-full border-2 border-neutral-900 dark:border-neutral-50 flex items-center justify-center flex-shrink-0">
+                {paymentMethod === "cod" && <div className="h-2 w-2 rounded-full bg-neutral-900 dark:bg-neutral-50" />}
+              </div>
+            </label>
+
+            {/* QR Code Option */}
+            <label className={`border p-5 flex items-center gap-4 cursor-pointer transition-colors ${paymentMethod === "qr" ? "border-neutral-900 dark:border-neutral-50 bg-neutral-100 dark:bg-neutral-900" : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"}`}>
+              <input type="radio" name="payment" value="qr" checked={paymentMethod === "qr"} onChange={() => setPaymentMethod("qr")} className="sr-only" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 text-neutral-600 dark:text-neutral-400"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+              <div>
+                <p className="text-sm font-medium">{lang === "vi" ? "Chuyển khoản QR Code" : "QR Code Transfer"}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                  {lang === "vi" ? "Quét mã để thanh toán ngay." : "Scan to pay instantly."}
+                </p>
+              </div>
+              <div className="ml-auto h-4 w-4 rounded-full border-2 border-neutral-900 dark:border-neutral-50 flex items-center justify-center flex-shrink-0">
+                {paymentMethod === "qr" && <div className="h-2 w-2 rounded-full bg-neutral-900 dark:bg-neutral-50" />}
+              </div>
+            </label>
+
+            {/* QR Image Display */}
+            {paymentMethod === "qr" && (
+              <div className="border border-neutral-200 dark:border-neutral-800 p-6 flex flex-col items-center justify-center bg-white dark:bg-neutral-950 text-center animate-in fade-in slide-in-from-top-2">
+                <p className="text-sm font-medium mb-4">{lang === "vi" ? "Quét mã QR dưới đây để thanh toán" : "Scan the QR code below to pay"}</p>
+                {/* 👉 HƯỚNG DẪN THÊM MÃ QR: Lưu ảnh QR của bạn vào thư mục 'public' với tên 'qr-code.png' */}
+                <div className="w-48 h-48 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center overflow-hidden">
+                  <img src="/qr-code.png" alt="Payment QR Code" className="w-full h-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('after:content-["[Ảnh_QR_chưa_có]"]', 'after:text-xs', 'after:text-neutral-400'); }} />
+                </div>
+                <p className="text-xs text-neutral-500 mt-4 max-w-sm leading-relaxed">
+                  {lang === "vi" ? "Nội dung chuyển khoản: SĐT của bạn. Vui lòng bấm Đặt Hàng sau khi đã chuyển thành công." : "Transfer note: Your phone number. Please click Place Order after successful transfer."}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Contact */}
