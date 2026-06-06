@@ -27,7 +27,7 @@ export function Navbar() {
               {/* 👉 ĐỔI MÀU CHỮ MENU Ở ĐÂY: Sửa màu ở dòng 'className' bên dưới */}
               <Link
                 to={n.to}
-              className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
+              className="text-neutral-400 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
               activeProps={{ className: "text-neutral-900 dark:text-neutral-50 font-medium" }}
               activeOptions={{ exact: n.exact }}
             >
