@@ -18,6 +18,12 @@ const SEED_VI = [
   { name: "Alex K.", body: "Tối giản, chắc chắn, đẹp mắt. Đúng thứ mình cần.", rating: 4, helpful: 3 },
 ];
 
+const SEED_EN = [
+  { name: "Minh T.", body: "Completely changed long coding sessions — no more neck pain after a week.", rating: 5, helpful: 12 },
+  { name: "Linh P.", body: "Excellent build quality. Worth every penny.", rating: 5, helpful: 8 },
+  { name: "Alex K.", body: "Minimalist, sturdy, beautiful. Exactly what I needed.", rating: 4, helpful: 3 },
+];
+
 function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "lg" }) {
   const cls = size === "lg" ? "h-4 w-4" : "h-3.5 w-3.5";
   return (
