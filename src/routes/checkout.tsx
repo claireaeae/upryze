@@ -112,9 +112,9 @@ function CheckoutPage() {
             {paymentMethod === "qr" && (
               <div className="border border-neutral-200 dark:border-neutral-800 p-6 flex flex-col items-center justify-center bg-white dark:bg-neutral-950 text-center animate-in fade-in slide-in-from-top-2">
                 <p className="text-sm font-medium mb-4">{lang === "vi" ? "Quét mã QR dưới đây để thanh toán" : "Scan the QR code below to pay"}</p>
-                {/* 👉 HƯỚNG DẪN THÊM MÃ QR: Lưu ảnh QR của bạn vào thư mục 'public' với tên 'qr-code.png' */}
+                {/* 👉 HƯỚNG DẪN THÊM MÀ QR: Lưu ảnh QR của bạn vào thư mục 'public/images' với tên 'qr-code.jpg' */}
                 <div className="w-48 h-48 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center overflow-hidden">
-                  <img src="/qr-code.png" alt="Payment QR Code" className="w-full h-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('after:content-["[Ảnh_QR_chưa_có]"]', 'after:text-xs', 'after:text-neutral-400'); }} />
+                  <img src="/images/qr-code.jpg" alt="Payment QR Code" className="w-full h-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('after:content-["[Ảnh_QR_chưa_có]"]', 'after:text-xs', 'after:text-neutral-400'); }} />
                 </div>
                 <p className="text-xs text-neutral-500 mt-4 max-w-sm leading-relaxed">
                   {lang === "vi" ? "Nội dung chuyển khoản: SĐT của bạn. Vui lòng bấm Đặt Hàng sau khi đã chuyển thành công." : "Transfer note: Your phone number. Please click Place Order after successful transfer."}
