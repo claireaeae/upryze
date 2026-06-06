@@ -28,7 +28,7 @@ const DICT = {
     products_title: "All Products",
     p_categories: "Categories", p_price: "Price",
     cat_all: "All", cat_posture: "Posture", cat_sensory: "Sensory", cat_care: "Care",
-    price_under: "Under 500k", price_mid: "500k - 2M", price_over: "Over 2M",
+    price_under: "Under $20", price_mid: "$20 - $80", price_over: "Over $80",
     no_match: "No products match the selected filters.",
     reviews_title: "Customer Reviews", write_review: "Write a review",
     review_name: "Your name", review_body: "Share your experience",
