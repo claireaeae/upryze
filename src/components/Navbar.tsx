@@ -20,7 +20,7 @@ export function Navbar() {
     <header className="fixed top-0 inset-x-0 z-40 bg-neutral-50/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-200 dark:border-neutral-800">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
         {/* 👉 ĐỔI TÊN LOGO Ở ĐÂY: Thay chữ "UPRYZE" thành tên tuỳ thích. Nếu muốn đổi màu logo, thêm 'text-red-500' vào className */}
-        <Link to="/" className="text-lg font-semibold tracking-[0.2em]">UPRYZEee</Link>
+        <Link to="/" className="text-lg font-semibold tracking-[0.2em]">UPRYZE</Link>
         <nav className="hidden md:flex items-center gap-10 text-sm">
           {NAV.map((n) => (
             <React.Fragment key={n.to}>
