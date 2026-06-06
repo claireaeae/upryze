@@ -51,7 +51,8 @@ function ProductDetail() {
     setHelpfulOn({});
   }, [lang, id]);
 
-  const reviews = dbReviews.length > 0 ? dbReviews : (lang === "vi" ? SEED_VI : SEED_EN);
+  const seedReviews = lang === "vi" ? SEED_VI : SEED_EN;
+  const reviews = [...dbReviews, ...seedReviews];
 
   const toggleHelpful = async (r: any, idx: number) => {
     const isLocalSeed = !r.id;
@@ -112,7 +113,7 @@ function ProductDetail() {
   }
 
   const data = product[lang];
-  const avgRating = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+  const avgRating = reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 5;
 
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-12 pb-24">

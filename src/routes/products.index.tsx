@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { formatPrice, type Category, getProducts } from "@/lib/products";
+import { getCategories } from "@/lib/categories";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@/lib/i18n";
 import { ProductCard } from "@/components/ProductCard";
@@ -22,7 +23,10 @@ function ProductsPage() {
   const [cat, setCat] = React.useState<Category | "all">("all");
   const [price, setPrice] = React.useState<"all" | "under" | "mid" | "over">("all");
 
-  const { data: products = [], isLoading } = useQuery({ queryKey: ["products"], queryFn: getProducts });
+  const { data: products = [], isLoading: loadingProducts } = useQuery({ queryKey: ["products"], queryFn: getProducts });
+  const { data: dbCategories = [], isLoading: loadingCats } = useQuery({ queryKey: ["categories"], queryFn: getCategories });
+
+  const isLoading = loadingProducts || loadingCats;
 
   const filtered = products.filter((p) => {
     if (cat !== "all" && p.category !== cat) return false;
@@ -32,11 +36,9 @@ function ProductsPage() {
     return true;
   });
 
-  const cats: { v: Category | "all"; label: string }[] = [
-    { v: "all", label: t("cat_all") },
-    { v: "posture", label: t("cat_posture") },
-    { v: "sensory", label: t("cat_sensory") },
-    { v: "care", label: t("cat_care") },
+  const cats = [
+    { v: "all" as const, label: t("cat_all") },
+    ...dbCategories.map(c => ({ v: c.slug, label: lang === "vi" ? c.name_vi : c.name_en })),
   ];
 
   const prices: { v: PriceFilter; label: string }[] = [

@@ -24,6 +24,24 @@ export async function getReviews(productId: number): Promise<Review[]> {
   return data || [];
 }
 
+export async function getAllReviews(): Promise<Review[]> {
+  const { data, error } = await supabase
+    .from("product_reviews")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching all reviews:", error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function deleteReview(id: number): Promise<void> {
+  const { error } = await supabase.from("product_reviews").delete().eq("id", id);
+  if (error) throw error;
+}
+
 export async function submitReview(productId: number, reviewData: Omit<Review, "id" | "product_id" | "created_at" | "helpful">) {
   const { data, error } = await supabase
     .from("product_reviews")

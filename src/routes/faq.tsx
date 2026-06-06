@@ -3,6 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Minus } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { submitQuestion } from "@/lib/questions";
+import { getFaqs } from "@/lib/faqs";
+import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
@@ -14,22 +16,7 @@ export const Route = createFileRoute("/faq")({
   component: FaqPage,
 });
 
-const FAQ = {
-  en: [
-    { q: "Does this help with posture?", a: "Yes — every product is heavily researched and designed to support healthy spine alignment over long work sessions." },
-    { q: "Delivery time?", a: "Orders ship within 24 hours. Standard delivery is 3–4 business days within Vietnam." },
-    { q: "Do you offer warranty?", a: "All Upryze products include a 12-month manufacturer warranty against defects." },
-    { q: "How do I choose the right product?", a: "Take the Workspace Setup Scorecard on the homepage — we'll recommend the right essentials for your setup." },
-    { q: "What is your return policy?", a: "We accept returns within 7 days of delivery for eligible non-customized items in original condition." },
-  ],
-  vi: [
-    { q: "Sản phẩm có giúp chỉnh tư thế?", a: "Có — mỗi sản phẩm đều được nghiên cứu kỹ và thiết kế để hỗ trợ cột sống trong các phiên làm việc dài." },
-    { q: "Thời gian giao hàng?", a: "Đơn hàng giao trong 24 giờ. Giao tiêu chuẩn 3–4 ngày làm việc trong nước." },
-    { q: "Bảo hành như thế nào?", a: "Tất cả sản phẩm Upryze được bảo hành 12 tháng chính hãng." },
-    { q: "Làm sao chọn sản phẩm phù hợp?", a: "Hãy thử Chấm điểm Không gian làm việc ở trang chủ — chúng tôi sẽ đề xuất phù hợp." },
-    { q: "Chính sách đổi trả?", a: "Chấp nhận đổi trả trong 7 ngày với sản phẩm không tùy chỉnh và còn nguyên trạng." },
-  ],
-};
+
 
 function FaqPage() {
   const { t, lang } = useI18n();
@@ -39,14 +26,22 @@ function FaqPage() {
   
   const [form, setForm] = React.useState({ name: "", email: "", message: "" });
 
-  const items = FAQ[lang];
+  const { data: faqs = [], isLoading: loadingFaqs } = useQuery({ queryKey: ["faqs"], queryFn: getFaqs });
+
+  const items = faqs.map(f => ({
+    q: lang === "vi" ? f.q_vi : f.q_en,
+    a: lang === "vi" ? f.a_vi : f.a_en,
+  }));
 
   return (
     <div className="max-w-3xl mx-auto px-6 lg:px-12 pt-16 pb-24">
       <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">{t("faq_title")}</h1>
 
       <div className="mt-12 border-t border-neutral-200 dark:border-neutral-800">
-        {items.map((item, i) => {
+        {loadingFaqs ? (
+          <div className="py-12 text-center text-sm text-neutral-500 animate-pulse">Loading FAQs...</div>
+        ) : (
+          items.map((item, i) => {
           const isOpen = open === i;
           return (
             <div key={i} className="border-b border-neutral-200 dark:border-neutral-800">

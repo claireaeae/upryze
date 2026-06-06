@@ -3,8 +3,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { getOrders, updateOrderStatus, deleteOrder, type Order, type OrderStatus } from "@/lib/orders";
 import { getProducts, addProduct, updateProduct, deleteProduct, formatPrice, type Product } from "@/lib/products";
 import { getQuestions, markQuestionAsRead, deleteQuestion, type Question } from "@/lib/questions";
+import { getCategories, saveCategory, deleteCategory, type CategoryData } from "@/lib/categories";
+import { getAllReviews, deleteReview } from "@/lib/reviews";
+import { getFaqs, saveFaq, deleteFaq, type FaqData } from "@/lib/faqs";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ShoppingBag, Clock, Truck, CheckCircle, XCircle, Package, Trash2, Eye, EyeOff, TrendingUp, BarChart3, Plus, Edit2, Save, X, Image as ImageIcon, MessageSquare, MailOpen } from "lucide-react";
+import { ShoppingBag, Clock, Truck, CheckCircle, XCircle, Package, Trash2, Eye, EyeOff, TrendingUp, BarChart3, Plus, Edit2, Save, X, Image as ImageIcon, MessageSquare, MailOpen, Star } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin Dashboard — Upryze" }] }),
@@ -229,16 +232,18 @@ function OrderCard({ order, onStatusChange, onDelete, products }: {
 
 function ProductManager({ products }: { products: Product[] }) {
   const qc = useQueryClient();
+  const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: getCategories });
+  
   const [editingId, setEditingId] = React.useState<number | "new" | null>(null);
   
   const initialForm = {
-    category: "posture",
+    category: "",
     price: 0,
     originalPrice: 0,
     en_name: "",
     vi_name: "",
-    en_label: "Posture",
-    vi_label: "Tư thế",
+    en_label: "",
+    vi_label: "",
     en_desc: "",
     vi_desc: "",
   };
@@ -350,9 +355,10 @@ function ProductManager({ products }: { products: Product[] }) {
             <div>
               <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Category</label>
               <select value={form.category} onChange={e => setForm({...form, category: e.target.value})} className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm">
-                <option value="posture">Posture</option>
-                <option value="sensory">Sensory</option>
-                <option value="care">Care</option>
+                <option value="" disabled>Select category</option>
+                {categories.map(c => (
+                  <option key={c.slug} value={c.slug}>{c.name_en} ({c.name_vi})</option>
+                ))}
               </select>
             </div>
 
@@ -518,8 +524,186 @@ function QuestionManager() {
   );
 }
 
+function CategoryManager() {
+  const qc = useQueryClient();
+  const { data: categories = [], isLoading } = useQuery({ queryKey: ["categories"], queryFn: getCategories });
+  const [form, setForm] = React.useState<CategoryData | null>(null);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form) return;
+    await saveCategory(form);
+    qc.invalidateQueries({ queryKey: ["categories"] });
+    setForm(null);
+  };
+
+  const handleDelete = async (slug: string) => {
+    if (!confirm("Delete this category?")) return;
+    await deleteCategory(slug);
+    qc.invalidateQueries({ queryKey: ["categories"] });
+  };
+
+  if (isLoading) return <div className="p-10 text-center animate-pulse">Loading...</div>;
+
+  return (
+    <div>
+      <div className="flex justify-end mb-4">
+        <button onClick={() => setForm({ slug: "", name_en: "", name_vi: "" })} className="flex items-center gap-2 bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-4 py-2 text-sm tracking-widest uppercase hover:opacity-90">
+          <Plus className="h-4 w-4" /> Add Category
+        </button>
+      </div>
+
+      {form && (
+        <form onSubmit={handleSave} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-sm tracking-widest uppercase font-medium">{form.slug ? "Edit Category" : "New Category"}</h3>
+            <button type="button" onClick={() => setForm(null)} className="text-neutral-500 hover:text-neutral-900"><X className="h-4 w-4" /></button>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Slug</label>
+              <input required value={form.slug} disabled={!!categories.find(c => c.slug === form.slug)} onChange={e => setForm({...form, slug: e.target.value})} className="w-full bg-transparent border px-3 py-2 text-sm" placeholder="e.g. ergonomic" />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Name (EN)</label>
+              <input required value={form.name_en} onChange={e => setForm({...form, name_en: e.target.value})} className="w-full bg-transparent border px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-neutral-500 mb-1">Name (VI)</label>
+              <input required value={form.name_vi} onChange={e => setForm({...form, name_vi: e.target.value})} className="w-full bg-transparent border px-3 py-2 text-sm" />
+            </div>
+          </div>
+          <button type="submit" className="bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-6 py-2 text-sm uppercase">Save</button>
+        </form>
+      )}
+
+      <table className="w-full text-left text-sm bg-white dark:bg-neutral-900 border">
+        <thead className="bg-neutral-50 border-b text-xs uppercase text-neutral-500">
+          <tr><th className="px-5 py-3">Slug</th><th className="px-5 py-3">English</th><th className="px-5 py-3">Vietnamese</th><th className="px-5 py-3 text-right">Actions</th></tr>
+        </thead>
+        <tbody className="divide-y">
+          {categories.map(c => (
+            <tr key={c.slug}>
+              <td className="px-5 py-3 font-mono">{c.slug}</td>
+              <td className="px-5 py-3">{c.name_en}</td>
+              <td className="px-5 py-3">{c.name_vi}</td>
+              <td className="px-5 py-3 text-right space-x-2">
+                <button onClick={() => setForm(c)} className="text-neutral-500 hover:text-blue-500"><Edit2 className="h-4 w-4" /></button>
+                <button onClick={() => handleDelete(c.slug)} className="text-neutral-500 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ReviewManager() {
+  const qc = useQueryClient();
+  const { data: reviews = [], isLoading } = useQuery({ queryKey: ["admin_reviews"], queryFn: getAllReviews });
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Delete this review?")) return;
+    await deleteReview(id);
+    qc.invalidateQueries({ queryKey: ["admin_reviews"] });
+  };
+
+  if (isLoading) return <div className="p-10 text-center animate-pulse">Loading...</div>;
+
+  return (
+    <div className="space-y-4">
+      {reviews.map(r => (
+        <div key={r.id} className="bg-white dark:bg-neutral-900 border p-5 flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-medium">{r.name}</span>
+              <div className="flex text-amber-400"><Star className="h-3 w-3 fill-current" /> {r.rating}</div>
+              <span className="text-xs text-neutral-400">ProductID: {r.product_id}</span>
+            </div>
+            <p className="text-sm">{r.body}</p>
+          </div>
+          <button onClick={() => handleDelete(r.id)} className="text-neutral-400 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
+        </div>
+      ))}
+      {reviews.length === 0 && <div className="p-10 text-center text-neutral-500">No reviews found.</div>}
+    </div>
+  );
+}
+
+function FaqManager() {
+  const qc = useQueryClient();
+  const { data: faqs = [], isLoading } = useQuery({ queryKey: ["faqs"], queryFn: getFaqs });
+  const [form, setForm] = React.useState<FaqData | null>(null);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form) return;
+    await saveFaq(form);
+    qc.invalidateQueries({ queryKey: ["faqs"] });
+    setForm(null);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Delete this FAQ?")) return;
+    await deleteFaq(id);
+    qc.invalidateQueries({ queryKey: ["faqs"] });
+  };
+
+  if (isLoading) return <div className="p-10 text-center animate-pulse">Loading...</div>;
+
+  return (
+    <div>
+      <div className="flex justify-end mb-4">
+        <button onClick={() => setForm({ q_en: "", a_en: "", q_vi: "", a_vi: "", sort_order: 0 })} className="flex items-center gap-2 bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-4 py-2 text-sm uppercase">
+          <Plus className="h-4 w-4" /> Add FAQ
+        </button>
+      </div>
+
+      {form && (
+        <form onSubmit={handleSave} className="bg-white dark:bg-neutral-900 border p-6 mb-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm uppercase font-medium">{form.id ? "Edit FAQ" : "New FAQ"}</h3>
+            <button type="button" onClick={() => setForm(null)} className="text-neutral-500"><X className="h-4 w-4" /></button>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div><label className="block text-xs uppercase text-neutral-500 mb-1">Question (EN)</label><input required value={form.q_en} onChange={e => setForm({...form, q_en: e.target.value})} className="w-full bg-transparent border px-3 py-2 text-sm" /></div>
+            <div><label className="block text-xs uppercase text-neutral-500 mb-1">Question (VI)</label><input required value={form.q_vi} onChange={e => setForm({...form, q_vi: e.target.value})} className="w-full bg-transparent border px-3 py-2 text-sm" /></div>
+            <div><label className="block text-xs uppercase text-neutral-500 mb-1">Answer (EN)</label><textarea required value={form.a_en} onChange={e => setForm({...form, a_en: e.target.value})} className="w-full bg-transparent border px-3 py-2 text-sm" rows={3}/></div>
+            <div><label className="block text-xs uppercase text-neutral-500 mb-1">Answer (VI)</label><textarea required value={form.a_vi} onChange={e => setForm({...form, a_vi: e.target.value})} className="w-full bg-transparent border px-3 py-2 text-sm" rows={3}/></div>
+          </div>
+          <div><label className="block text-xs uppercase text-neutral-500 mb-1">Sort Order</label><input type="number" required value={form.sort_order} onChange={e => setForm({...form, sort_order: Number(e.target.value)})} className="bg-transparent border px-3 py-2 text-sm w-32" /></div>
+          <button type="submit" className="bg-neutral-900 text-white px-6 py-2 text-sm uppercase">Save</button>
+        </form>
+      )}
+
+      <div className="space-y-4">
+        {faqs.map(f => (
+          <div key={f.id} className="bg-white border p-5">
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <p className="font-medium text-sm text-blue-600 mb-1">EN: {f.q_en}</p>
+                <p className="text-xs text-neutral-600 mb-3">{f.a_en}</p>
+                <p className="font-medium text-sm text-red-600 mb-1">VI: {f.q_vi}</p>
+                <p className="text-xs text-neutral-600">{f.a_vi}</p>
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                <span className="text-[10px] uppercase text-neutral-400">Order: {f.sort_order}</span>
+                <div className="space-x-2">
+                  <button onClick={() => setForm(f)} className="text-neutral-400 hover:text-blue-500"><Edit2 className="h-4 w-4" /></button>
+                  <button onClick={() => handleDelete(f.id!)} className="text-neutral-400 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Dashboard() {
-  const [activeTab, setActiveTab] = React.useState<"orders" | "products" | "questions">("orders");
+  const [activeTab, setActiveTab] = React.useState<"orders" | "products" | "categories" | "reviews" | "faqs" | "questions">("orders");
   const [orders, setOrders] = React.useState<Order[]>([]);
   const [filter, setFilter] = React.useState<OrderStatus | "all">("all");
   const [loading, setLoading] = React.useState(true);
@@ -573,34 +757,23 @@ function Dashboard() {
       </header>
 
       <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="flex items-center gap-8 border-b border-neutral-200 dark:border-neutral-800 mb-8">
-          <button 
-            onClick={() => setActiveTab("orders")}
-            className={`pb-4 text-sm font-medium tracking-widest uppercase transition-colors border-b-2 ${activeTab === "orders" ? "border-neutral-900 dark:border-neutral-50 text-neutral-900 dark:text-neutral-50" : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
-          >
-            Orders
-          </button>
-          <button 
-            onClick={() => setActiveTab("products")}
-            className={`pb-4 text-sm font-medium tracking-widest uppercase transition-colors border-b-2 ${activeTab === "products" ? "border-neutral-900 dark:border-neutral-50 text-neutral-900 dark:text-neutral-50" : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
-          >
-            Products
-          </button>
-          <button 
-            onClick={() => setActiveTab("questions")}
-            className={`pb-4 text-sm font-medium tracking-widest uppercase transition-colors border-b-2 ${activeTab === "questions" ? "border-neutral-900 dark:border-neutral-50 text-neutral-900 dark:text-neutral-50" : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
-          >
-            Questions
-          </button>
+        <div className="flex items-center gap-8 border-b border-neutral-200 dark:border-neutral-800 mb-8 overflow-x-auto whitespace-nowrap">
+          {["orders", "products", "categories", "reviews", "faqs", "questions"].map((tab) => (
+            <button 
+              key={tab}
+              onClick={() => setActiveTab(tab as any)}
+              className={`pb-4 text-sm font-medium tracking-widest uppercase transition-colors border-b-2 ${activeTab === tab ? "border-neutral-900 dark:border-neutral-50 text-neutral-900 dark:text-neutral-50" : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
-        {activeTab === "questions" && (
-          <QuestionManager />
-        )}
-
-        {activeTab === "products" && (
-          <ProductManager products={products} />
-        )}
+        {activeTab === "questions" && <QuestionManager />}
+        {activeTab === "products" && <ProductManager products={products} />}
+        {activeTab === "categories" && <CategoryManager />}
+        {activeTab === "reviews" && <ReviewManager />}
+        {activeTab === "faqs" && <FaqManager />}
 
         {activeTab === "orders" && (
           <>

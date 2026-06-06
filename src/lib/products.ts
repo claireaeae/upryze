@@ -1,7 +1,7 @@
 import { supabase } from "./supabase";
 import { v4 as uuidv4 } from "uuid";
 
-export type Category = "posture" | "sensory" | "care";
+export type Category = string;
 export type Lang = "en" | "vi";
 
 export type Product = {
