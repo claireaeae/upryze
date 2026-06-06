@@ -31,7 +31,7 @@ export function Footer() {
           <p className="font-medium mb-3">{t("f_contact")}</p>
           <ul className="space-y-2 text-neutral-500 dark:text-neutral-400">
             <li>upryze.hcm@gmail.com</li>
-            <li>+84 123 456 789</li>
+            <li>+84 794702949</li>
             <li>{t("address_label")}: Ho Chi Minh City, VN</li>
             <li>
               <a href="https://www.facebook.com/share/1DoTPUca58/?mibextid=wwXIfr" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-50">
