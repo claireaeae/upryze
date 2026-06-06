@@ -3,7 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus, Minus, Star, ThumbsUp, Check, Package, User, ChevronRight } from "lucide-react";
 import { getProduct } from "@/lib/products";
 import { formatPrice } from "@/lib/products";
-import { useQuery } from "@tanstack/react-query";
+import { getReviews, submitReview, updateHelpful, type Review } from "@/lib/reviews";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCart } from "@/lib/cart";
 import { useI18n } from "@/lib/i18n";
 
@@ -11,14 +12,7 @@ export const Route = createFileRoute("/products/$id")({
   component: ProductDetail,
 });
 
-type Review = { name: string; body: string; rating: number; helpful: number };
-
-const SEED_EN: Review[] = [
-  { name: "Minh T.", body: "Game-changer for long coding sessions — neck pain gone in a week.", rating: 5, helpful: 12 },
-  { name: "Linh P.", body: "Build quality is exceptional. Worth every đồng.", rating: 5, helpful: 8 },
-  { name: "Alex K.", body: "Minimal, sturdy, and looks great. Exactly what I wanted.", rating: 4, helpful: 3 },
-];
-const SEED_VI: Review[] = [
+const SEED_VI = [
   { name: "Minh T.", body: "Thay đổi hoàn toàn những phiên code dài — hết đau cổ sau 1 tuần.", rating: 5, helpful: 12 },
   { name: "Linh P.", body: "Chất lượng hoàn thiện cực tốt. Đáng từng đồng.", rating: 5, helpful: 8 },
   { name: "Alex K.", body: "Tối giản, chắc chắn, đẹp mắt. Đúng thứ mình cần.", rating: 4, helpful: 3 },
@@ -37,38 +31,61 @@ function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "lg
 
 function ProductDetail() {
   const { id } = Route.useParams();
-  const { data: product, isLoading } = useQuery({ queryKey: ["product", id], queryFn: () => getProduct(Number(id)) });
+  const productId = Number(id);
+  const qc = useQueryClient();
+  const { data: product, isLoading } = useQuery({ queryKey: ["product", productId], queryFn: () => getProduct(productId) });
+  const { data: dbReviews = [], isLoading: loadingReviews } = useQuery({ queryKey: ["reviews", productId], queryFn: () => getReviews(productId) });
+  
   const { add, setOpen } = useCart();
   const { t, lang } = useI18n();
   const [qty, setQty] = React.useState(1);
-  const [reviews, setReviews] = React.useState<Review[]>(lang === "vi" ? SEED_VI : SEED_EN);
   const [helpfulOn, setHelpfulOn] = React.useState<Record<number, boolean>>({});
   const [showForm, setShowForm] = React.useState(false);
   const [draft, setDraft] = React.useState({ name: "", body: "", rating: 5 });
   const [hoverStar, setHoverStar] = React.useState(0);
   const [justPosted, setJustPosted] = React.useState(false);
   const [addedAnim, setAddedAnim] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
-    setReviews(lang === "vi" ? SEED_VI : SEED_EN);
     setHelpfulOn({});
   }, [lang, id]);
 
-  const toggleHelpful = (i: number) => {
-    setHelpfulOn((s) => ({ ...s, [i]: !s[i] }));
-    setReviews((rs) => rs.map((r, j) => j === i ? { ...r, helpful: r.helpful + (helpfulOn[i] ? -1 : 1) } : r));
+  const reviews = dbReviews.length > 0 ? dbReviews : (lang === "vi" ? SEED_VI : SEED_EN);
+
+  const toggleHelpful = async (r: any, idx: number) => {
+    const isLocalSeed = !r.id;
+    if (isLocalSeed) return; // Cannot update seed data
+    
+    const currentlyOn = helpfulOn[r.id];
+    setHelpfulOn((s) => ({ ...s, [r.id]: !currentlyOn }));
+    try {
+      await updateHelpful(r.id, r.helpful, !currentlyOn);
+      qc.invalidateQueries({ queryKey: ["reviews", productId] });
+    } catch (e) {
+      setHelpfulOn((s) => ({ ...s, [r.id]: currentlyOn }));
+    }
   };
 
-  const submitReview = (e: React.FormEvent) => {
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     const name = draft.name.trim().slice(0, 60);
     const body = draft.body.trim().slice(0, 500);
     if (!name || !body) return;
-    setReviews((rs) => [{ name, body, rating: draft.rating, helpful: 0 }, ...rs]);
-    setDraft({ name: "", body: "", rating: 5 });
-    setShowForm(false);
-    setJustPosted(true);
-    setTimeout(() => setJustPosted(false), 2500);
+    
+    setIsSubmitting(true);
+    try {
+      await submitReview(productId, { name, body, rating: draft.rating });
+      qc.invalidateQueries({ queryKey: ["reviews", productId] });
+      setDraft({ name: "", body: "", rating: 5 });
+      setShowForm(false);
+      setJustPosted(true);
+      setTimeout(() => setJustPosted(false), 2500);
+    } catch (error) {
+      alert("Error posting review");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleAddToCart = () => {
@@ -246,7 +263,7 @@ function ProductDetail() {
         )}
 
         {showForm && (
-          <form onSubmit={submitReview} className="mb-8 border border-neutral-200 dark:border-neutral-800 p-6 md:p-8 space-y-4">
+          <form onSubmit={handleSubmitReview} className="mb-8 border border-neutral-200 dark:border-neutral-800 p-6 md:p-8 space-y-4">
             <div>
               <p className="text-xs tracking-widest uppercase text-neutral-500 dark:text-neutral-400 mb-2">{t("review_rating")}</p>
               <div className="flex gap-1" onMouseLeave={() => setHoverStar(0)}>
@@ -276,37 +293,42 @@ function ProductDetail() {
               placeholder={t("review_body")}
               className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-50"
             />
-            <button
-              type="submit"
-              className="bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-8 py-3 text-xs tracking-widest uppercase hover:opacity-90 transition-opacity cursor-pointer"
-            >
-              {t("review_submit")}
+            <button type="submit" disabled={isSubmitting} className="bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-6 py-2.5 text-xs tracking-widest uppercase hover:opacity-90 disabled:opacity-50">
+              {isSubmitting ? "Posting..." : t("review_submit")}
             </button>
           </form>
         )}
-
-        <div className="grid md:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800">
-          {reviews.map((r, i) => (
-            <div key={i} className="bg-neutral-50 dark:bg-neutral-950 p-6 flex flex-col">
-              <StarRating rating={r.rating} size="sm" />
-              <p className="mt-4 text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed flex-1">"{r.body}"</p>
-              <div className="mt-4 flex items-center justify-between">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">— {r.name}</p>
-                <button
-                  onClick={() => toggleHelpful(i)}
-                  className={`flex items-center gap-1.5 text-xs tracking-wider uppercase px-2 py-1 border cursor-pointer transition-colors ${
-                    helpfulOn[i]
-                      ? "border-neutral-900 dark:border-neutral-50 text-neutral-900 dark:text-neutral-50"
-                      : "border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400 hover:border-neutral-900 dark:hover:border-neutral-50"
-                  }`}
-                >
-                  <ThumbsUp className="h-3 w-3" />
-                  <span className="tabular-nums">{r.helpful}</span>
-                </button>
+        {loadingReviews ? (
+          <div className="py-12 text-center text-sm text-neutral-500 animate-pulse">Loading reviews...</div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6 md:gap-12">
+            {reviews.map((r, i) => (
+              <div key={r.id || i} className="pb-6 border-b border-neutral-200 dark:border-neutral-800 last:border-0">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-medium text-sm">{r.name}</span>
+                  <StarRating rating={r.rating} size="sm" />
+                </div>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4">{r.body}</p>
+                {r.id ? (
+                  <button
+                    onClick={() => toggleHelpful(r, i)}
+                    className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${
+                      helpfulOn[r.id] ? "text-neutral-900 dark:text-neutral-50" : "text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-50"
+                    }`}
+                  >
+                    <ThumbsUp className="h-3.5 w-3.5" />
+                    {t("review_helpful")} ({r.helpful})
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-500">
+                    <ThumbsUp className="h-3.5 w-3.5" />
+                    {t("review_helpful")} ({r.helpful})
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
