@@ -2,8 +2,9 @@ import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getOrders, updateOrderStatus, deleteOrder, type Order, type OrderStatus } from "@/lib/orders";
 import { getProducts, addProduct, updateProduct, deleteProduct, formatPrice, type Product } from "@/lib/products";
+import { getQuestions, markQuestionAsRead, deleteQuestion, type Question } from "@/lib/questions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ShoppingBag, Clock, Truck, CheckCircle, XCircle, Package, Trash2, Eye, EyeOff, TrendingUp, BarChart3, Plus, Edit2, Save, X, Image as ImageIcon } from "lucide-react";
+import { ShoppingBag, Clock, Truck, CheckCircle, XCircle, Package, Trash2, Eye, EyeOff, TrendingUp, BarChart3, Plus, Edit2, Save, X, Image as ImageIcon, MessageSquare, MailOpen } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin Dashboard — Upryze" }] }),
@@ -443,8 +444,82 @@ function ProductManager({ products }: { products: Product[] }) {
   );
 }
 
+function QuestionManager() {
+  const qc = useQueryClient();
+  const { data: questions = [], isLoading } = useQuery({
+    queryKey: ["questions"],
+    queryFn: getQuestions,
+  });
+
+  const handleMarkAsRead = async (id: number) => {
+    try {
+      await markQuestionAsRead(id);
+      qc.invalidateQueries({ queryKey: ["questions"] });
+    } catch (error) {
+      alert("Error updating status");
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this message?")) return;
+    try {
+      await deleteQuestion(id);
+      qc.invalidateQueries({ queryKey: ["questions"] });
+    } catch (error) {
+      alert("Error deleting message");
+    }
+  };
+
+  if (isLoading) {
+    return <div className="text-sm text-neutral-500 py-10 text-center animate-pulse">Loading messages...</div>;
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-16 text-center">
+        <MessageSquare className="h-10 w-10 text-neutral-300 dark:text-neutral-700 mx-auto mb-4" />
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">No customer questions yet.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {questions.map((q) => (
+        <div key={q.id} className={`bg-white dark:bg-neutral-900 border ${q.status === 'unread' ? 'border-blue-300 dark:border-blue-800' : 'border-neutral-200 dark:border-neutral-800'} p-5`}>
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-medium text-sm">{q.name}</span>
+                {q.status === 'unread' && <span className="bg-blue-100 text-blue-800 text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-sm font-semibold">New</span>}
+              </div>
+              <a href={`mailto:${q.email}`} className="text-xs text-blue-600 hover:underline">{q.email}</a>
+              <span className="text-xs text-neutral-400 ml-3">
+                {new Date(q.created_at).toLocaleString('vi-VN')}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {q.status === 'unread' && (
+                <button onClick={() => handleMarkAsRead(q.id)} className="p-1.5 text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors tooltip" title="Mark as Read">
+                  <MailOpen className="h-4 w-4" />
+                </button>
+              )}
+              <button onClick={() => handleDelete(q.id)} className="p-1.5 text-neutral-500 hover:text-red-500 transition-colors" title="Delete">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <div className="text-sm bg-neutral-50 dark:bg-neutral-950 p-4 border border-neutral-100 dark:border-neutral-800 whitespace-pre-wrap text-neutral-700 dark:text-neutral-300">
+            {q.message}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function Dashboard() {
-  const [activeTab, setActiveTab] = React.useState<"orders" | "products">("orders");
+  const [activeTab, setActiveTab] = React.useState<"orders" | "products" | "questions">("orders");
   const [orders, setOrders] = React.useState<Order[]>([]);
   const [filter, setFilter] = React.useState<OrderStatus | "all">("all");
   const [loading, setLoading] = React.useState(true);
@@ -511,7 +586,17 @@ function Dashboard() {
           >
             Products
           </button>
+          <button 
+            onClick={() => setActiveTab("questions")}
+            className={`pb-4 text-sm font-medium tracking-widest uppercase transition-colors border-b-2 ${activeTab === "questions" ? "border-neutral-900 dark:border-neutral-50 text-neutral-900 dark:text-neutral-50" : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
+          >
+            Questions
+          </button>
         </div>
+
+        {activeTab === "questions" && (
+          <QuestionManager />
+        )}
 
         {activeTab === "products" && (
           <ProductManager products={products} />

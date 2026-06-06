@@ -2,6 +2,7 @@ import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Minus } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { submitQuestion } from "@/lib/questions";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
@@ -34,6 +35,9 @@ function FaqPage() {
   const { t, lang } = useI18n();
   const [open, setOpen] = React.useState<number | null>(0);
   const [sent, setSent] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  
+  const [form, setForm] = React.useState({ name: "", email: "", message: "" });
 
   const items = FAQ[lang];
 
@@ -71,26 +75,41 @@ function FaqPage() {
           <p className="mt-8 text-sm">{t("feedback_thanks")}</p>
         ) : (
           <form
-            onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+            onSubmit={async (e) => { 
+              e.preventDefault(); 
+              setLoading(true);
+              try {
+                await submitQuestion(form.name, form.email, form.message);
+                setSent(true);
+              } catch (err) {
+                alert("Failed to send message. Please try again.");
+              } finally {
+                setLoading(false);
+              }
+            }}
             className="mt-8 space-y-4"
           >
             <input
               required placeholder={t("f_name")}
+              value={form.name} onChange={(e) => setForm({...form, name: e.target.value})}
               className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-50"
             />
             <input
               required type="email" placeholder={t("f_email")}
+              value={form.email} onChange={(e) => setForm({...form, email: e.target.value})}
               className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-50"
             />
             <textarea
               required placeholder={t("f_message")} rows={5}
+              value={form.message} onChange={(e) => setForm({...form, message: e.target.value})}
               className="w-full bg-transparent border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-50"
             />
             <button
               type="submit"
-              className="bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-8 py-3 text-sm tracking-wider uppercase hover:opacity-90 transition-opacity cursor-pointer"
+              disabled={loading}
+              className="bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 px-8 py-3 text-sm tracking-wider uppercase hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
             >
-              {t("btn_submit")}
+              {loading ? "Sending..." : t("btn_submit")}
             </button>
           </form>
         )}
